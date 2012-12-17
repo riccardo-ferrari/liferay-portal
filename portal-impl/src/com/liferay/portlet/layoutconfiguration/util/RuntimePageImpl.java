@@ -514,8 +514,21 @@ public class RuntimePageImpl implements RuntimePage {
 			layoutTemplateId = layoutTemplateId.substring(pos + 1);
 		}
 
-		return LayoutTemplateLocalServiceUtil.getLayoutTemplate(
-			layoutTemplateId, standard, themeId);
+		LayoutTemplate layoutTemplate =
+			LayoutTemplateLocalServiceUtil.getLayoutTemplate(
+				layoutTemplateId, standard, themeId);
+
+		if (layoutTemplate == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Layout template: " + layoutTemplateId +
+					" not available falling back to default");
+			}
+
+			layoutTemplate = LayoutTemplateLocalServiceUtil.getLayoutTemplate(
+				PropsValues.DEFAULT_LAYOUT_TEMPLATE_ID, standard, themeId);
+		}
+
+		return layoutTemplate;
 	}
 
 	protected void parallelyRenderPortlets(
