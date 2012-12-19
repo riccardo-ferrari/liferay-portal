@@ -180,7 +180,8 @@ public class DDMStructureLocalServiceImpl
 			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
-		DDMStructure structure = getStructure(structureId);
+		DDMStructure structure = ddmStructurePersistence.findByPrimaryKey(
+			structureId);
 
 		return addStructure(
 			userId, structure.getGroupId(), structure.getParentStructureId(),

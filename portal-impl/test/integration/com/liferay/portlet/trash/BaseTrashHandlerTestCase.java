@@ -26,10 +26,12 @@ import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.WorkflowedModel;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.util.TestPropsValues;
@@ -38,6 +40,7 @@ import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.service.TrashEntryLocalServiceUtil;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,12 +48,20 @@ import org.junit.Test;
 /**
  * @author Brian Wing Shun Chan
  * @author Eudaldo Alonso
+ * @author Manuel de la Peña
  */
 public abstract class BaseTrashHandlerTestCase {
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
 		FinderCacheUtil.clearCache();
+
+		group = ServiceTestUtil.addGroup();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		GroupLocalServiceUtil.deleteGroup(group);
 	}
 
 	@Test
@@ -107,7 +118,27 @@ public abstract class BaseTrashHandlerTestCase {
 		trashVersionBaseModel(false);
 	}
 
-	protected abstract BaseModel<?> addBaseModel(
+	protected BaseModel<?> addBaseModel(
+			BaseModel<?> parentBaseModel, boolean approved,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		boolean workflowEnabled = WorkflowThreadLocal.isEnabled();
+
+		try {
+			WorkflowThreadLocal.setEnabled(true);
+
+			BaseModel<?> baseModel = addBaseModelWithWorkflow(
+				parentBaseModel, approved, serviceContext);
+
+			return baseModel;
+		}
+		finally {
+			WorkflowThreadLocal.setEnabled(workflowEnabled);
+		}
+	}
+
+	protected abstract BaseModel<?> addBaseModelWithWorkflow(
 			BaseModel<?> parentBaseModel, boolean approved,
 			ServiceContext serviceContext)
 		throws Exception;
@@ -176,6 +207,8 @@ public abstract class BaseTrashHandlerTestCase {
 		return (Long)classedModel.getPrimaryKeyObj();
 	}
 
+	protected abstract String getUniqueTitle(BaseModel<?> baseModel);
+
 	protected WorkflowedModel getWorkflowedModel(ClassedModel baseModel)
 		throws Exception {
 
@@ -202,7 +235,11 @@ public abstract class BaseTrashHandlerTestCase {
 	protected boolean isBaseModelTrashName(ClassedModel classedModel) {
 		String baseModelName = getBaseModelName(classedModel);
 
-		return baseModelName.contains(StringPool.SLASH);
+		if (baseModelName.startsWith(StringPool.SLASH)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected boolean isIndexableBaseModel() {
@@ -263,8 +300,6 @@ public abstract class BaseTrashHandlerTestCase {
 	protected void trashBaseModel(boolean approved, boolean delete)
 		throws Exception {
 
-		Group group = ServiceTestUtil.addGroup();
-
 		ServiceContext serviceContext = ServiceTestUtil.getServiceContext();
 
 		serviceContext.setScopeGroupId(group.getGroupId());
@@ -285,8 +320,9 @@ public abstract class BaseTrashHandlerTestCase {
 				getSearchKeywords(), serviceContext);
 		}
 
-		BaseModel<?> baseModel = addBaseModel(
-			parentBaseModel, approved, serviceContext);
+		baseModel = addBaseModel(parentBaseModel, approved, serviceContext);
+
+		String uniqueTitle = getUniqueTitle(baseModel);
 
 		Assert.assertEquals(
 			initialBaseModelsCount + 1,
@@ -338,6 +374,10 @@ public abstract class BaseTrashHandlerTestCase {
 			Assert.assertEquals(
 				initialTrashEntriesSearchCount + 1,
 				searchTrashEntriesCount(getSearchKeywords(), serviceContext));
+		}
+
+		if (uniqueTitle != null) {
+			Assert.assertEquals(uniqueTitle, getUniqueTitle(baseModel));
 		}
 
 		TrashEntry trashEntry = TrashEntryLocalServiceUtil.getEntry(
@@ -416,12 +456,14 @@ public abstract class BaseTrashHandlerTestCase {
 			if (isAssetableModel()) {
 				Assert.assertEquals(approved, isAssetEntryVisible(baseModel));
 			}
+
+			if (uniqueTitle != null) {
+				Assert.assertEquals(uniqueTitle, getUniqueTitle(baseModel));
+			}
 		}
 	}
 
 	protected void trashDuplicateBaseModel() throws Exception {
-		Group group = ServiceTestUtil.addGroup();
-
 		ServiceContext serviceContext = ServiceTestUtil.getServiceContext();
 
 		serviceContext.setScopeGroupId(group.getGroupId());
@@ -433,8 +475,7 @@ public abstract class BaseTrashHandlerTestCase {
 			parentBaseModel);
 		int initialTrashEntriesCount = getTrashEntriesCount(group.getGroupId());
 
-		BaseModel<?> baseModel = addBaseModel(
-			parentBaseModel, true, serviceContext);
+		baseModel = addBaseModel(parentBaseModel, true, serviceContext);
 
 		moveBaseModelToTrash((Long)baseModel.getPrimaryKeyObj());
 
@@ -468,8 +509,6 @@ public abstract class BaseTrashHandlerTestCase {
 	}
 
 	protected void trashParentBaseModel(boolean delete) throws Exception {
-		Group group = ServiceTestUtil.addGroup();
-
 		ServiceContext serviceContext = ServiceTestUtil.getServiceContext();
 
 		serviceContext.setScopeGroupId(group.getGroupId());
@@ -481,8 +520,7 @@ public abstract class BaseTrashHandlerTestCase {
 			parentBaseModel);
 		int initialTrashEntriesCount = getTrashEntriesCount(group.getGroupId());
 
-		BaseModel<?> baseModel = addBaseModel(
-			parentBaseModel, true, serviceContext);
+		baseModel = addBaseModel(parentBaseModel, true, serviceContext);
 
 		Assert.assertEquals(
 			initialBaseModelsCount + 1,
@@ -540,8 +578,6 @@ public abstract class BaseTrashHandlerTestCase {
 	}
 
 	protected void trashVersionBaseModel(boolean delete) throws Exception {
-		Group group = ServiceTestUtil.addGroup();
-
 		ServiceContext serviceContext = ServiceTestUtil.getServiceContext();
 
 		serviceContext.setScopeGroupId(group.getGroupId());
@@ -562,8 +598,7 @@ public abstract class BaseTrashHandlerTestCase {
 				getSearchKeywords(), serviceContext);
 		}
 
-		BaseModel<?> baseModel = addBaseModel(
-			parentBaseModel, true, serviceContext);
+		baseModel = addBaseModel(parentBaseModel, true, serviceContext);
 
 		baseModel = updateBaseModel(
 			(Long)baseModel.getPrimaryKeyObj(), serviceContext);
@@ -668,5 +703,8 @@ public abstract class BaseTrashHandlerTestCase {
 
 		return getBaseModel(primaryKey);
 	}
+
+	protected BaseModel<?> baseModel;
+	protected Group group;
 
 }
