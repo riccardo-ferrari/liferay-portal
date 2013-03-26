@@ -967,72 +967,98 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 			PortletDataContext portletDataContext, Element entityElement)
 		throws Exception {
 
-		Element dlRepositoriesElement = entityElement.element(
+		List<Element> dlRepositoriesElements = entityElement.elements(
 			"dl-repositories");
+		if (dlRepositoriesElements != null) {
+			for (Element dlRepositoriesElement : dlRepositoriesElements) {
 
-		List<Element> dlRepositoryElements = Collections.emptyList();
+				List<Element> dlRepositoryElements = Collections.emptyList();
 
-		if (dlRepositoriesElement != null) {
-			dlRepositoryElements = dlRepositoriesElement.elements("repository");
+				if (dlRepositoriesElement != null) {
+					dlRepositoryElements = dlRepositoriesElement.elements(
+							"repository");
+				}
+
+				for (Element repositoryElement : dlRepositoryElements) {
+					DLPortletDataHandler.importRepository(
+						portletDataContext, repositoryElement);
+				}
+			}
 		}
 
-		for (Element repositoryElement : dlRepositoryElements) {
-			DLPortletDataHandler.importRepository(
-				portletDataContext, repositoryElement);
-		}
-
-		Element dlRepositoryEntriesElement = entityElement.element(
+		List<Element> dlRepositoryEntriesElements = entityElement.elements(
 			"dl-repository-entries");
+		if (dlRepositoryEntriesElements != null) {
+			for (Element dlRepositoryEntriesElement : dlRepositoryEntriesElements) {
 
-		List<Element> dlRepositoryEntryElements = Collections.emptyList();
+				List<Element> dlRepositoryEntryElements = Collections.emptyList();
 
-		if (dlRepositoryEntriesElement != null) {
-			dlRepositoryEntryElements = dlRepositoryEntriesElement.elements(
-				"repository-entry");
+				if (dlRepositoryEntriesElement != null) {
+					dlRepositoryEntryElements = dlRepositoryEntriesElement.elements(
+							"repository-entry");
+				}
+
+				for (Element repositoryEntryElement : dlRepositoryEntryElements) {
+					DLPortletDataHandler.importRepositoryEntry(
+							portletDataContext, repositoryEntryElement);
+				}
+			}
 		}
 
-		for (Element repositoryEntryElement : dlRepositoryEntryElements) {
-			DLPortletDataHandler.importRepositoryEntry(
-				portletDataContext, repositoryEntryElement);
+		List<Element> dlFoldersElements = entityElement.elements("dl-folders");
+		if (dlFoldersElements != null) {
+			for (Element dlFoldersElement : dlFoldersElements) {
+				
+				List<Element> dlFolderElements = Collections.emptyList();
+				
+				if (dlFoldersElement != null) {
+					dlFolderElements = dlFoldersElement.elements("folder");
+				}
+				
+				for (Element folderElement : dlFolderElements) {
+					DLPortletDataHandler.importFolder(
+							portletDataContext, folderElement);
+				}
+			}
 		}
 
-		Element dlFoldersElement = entityElement.element("dl-folders");
+		List<Element> dlFileEntriesElements = entityElement.elements(
+				"dl-file-entries");
+		if (dlFileEntriesElements != null) {
+			for (Element dlFileEntriesElement : dlFileEntriesElements) {
+				
+				List<Element> dlFileEntryElements = Collections.emptyList();
+				
+				if (dlFileEntriesElement != null) {
+					dlFileEntryElements = dlFileEntriesElement.elements(
+							"file-entry");
+				}
 
-		List<Element> dlFolderElements = Collections.emptyList();
-
-		if (dlFoldersElement != null) {
-			dlFolderElements = dlFoldersElement.elements("folder");
+				for (Element fileEntryElement : dlFileEntryElements) {
+					DLPortletDataHandler.importFileEntry(
+							portletDataContext, fileEntryElement);
+				}
+			}
 		}
 
-		for (Element folderElement : dlFolderElements) {
-			DLPortletDataHandler.importFolder(
-				portletDataContext, folderElement);
-		}
+		List<Element> dlFileRanksElements = entityElement.elements(
+				"dl-file-ranks");
 
-		Element dlFileEntriesElement = entityElement.element("dl-file-entries");
+		if (dlFileRanksElements != null){
+			for (Element dlFileRanksElement : dlFileRanksElements)	{
 
-		List<Element> dlFileEntryElements = Collections.emptyList();
+				List<Element> dlFileRankElements = Collections.emptyList();
 
-		if (dlFileEntriesElement != null) {
-			dlFileEntryElements = dlFileEntriesElement.elements("file-entry");
-		}
+				if (dlFileRanksElement != null) {
+					dlFileRankElements = dlFileRanksElement.elements(
+							"file-rank");
+				}
 
-		for (Element fileEntryElement : dlFileEntryElements) {
-			DLPortletDataHandler.importFileEntry(
-				portletDataContext, fileEntryElement);
-		}
-
-		Element dlFileRanksElement = entityElement.element("dl-file-ranks");
-
-		List<Element> dlFileRankElements = Collections.emptyList();
-
-		if (dlFileRanksElement != null) {
-			dlFileRankElements = dlFileRanksElement.elements("file-rank");
-		}
-
-		for (Element fileRankElement : dlFileRankElements) {
-			DLPortletDataHandler.importFileRank(
-				portletDataContext, fileRankElement);
+				for (Element fileRankElement : dlFileRankElements) {
+					DLPortletDataHandler.importFileRank(
+							portletDataContext, fileRankElement);
+				}
+			}
 		}
 	}
 
