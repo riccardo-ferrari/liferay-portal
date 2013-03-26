@@ -81,8 +81,7 @@ public class WikiPortletDataHandler extends BasePortletDataHandler {
 		Element dlFileEntryTypesElement = pagesElement.element(
 						"dl-file-entry-types");
 		if (dlFileEntryTypesElement == null) {
-			pagesElement.addElement(
-							"dl-file-entry-types");
+			pagesElement.addElement("dl-file-entry-types");
 		}
 		Element dlFoldersElement = pagesElement.element("dl-folders");
 		if (dlFoldersElement == null) {
@@ -90,8 +89,7 @@ public class WikiPortletDataHandler extends BasePortletDataHandler {
 		}
 		Element dlFileEntriesElement = pagesElement.element("dl-file-entries");
 		if (dlFileEntriesElement == null) {
-			pagesElement.addElement(
-							"dl-file-entries");
+			pagesElement.addElement("dl-file-entries");
 		}
 		Element dlFileRanksElement = pagesElement.element("dl-file-ranks");
 		if (dlFileRanksElement == null) {
@@ -99,14 +97,12 @@ public class WikiPortletDataHandler extends BasePortletDataHandler {
 		}
 		Element dlRepositoriesElement = pagesElement.element("dl-repositories");
 		if (dlRepositoriesElement == null){
-			pagesElement.addElement(
-							"dl-repositories");
+			pagesElement.addElement("dl-repositories");
 		}
 		Element dlRepositoryEntriesElement = pagesElement.element(
 			"dl-repository-entries");
 		if (dlRepositoryEntriesElement == null) {
-			pagesElement.addElement(
-							"dl-repository-entries");
+			pagesElement.addElement("dl-repository-entries");
 		}
 
 		List<WikiPage> pages = WikiPageUtil.findByN_S(

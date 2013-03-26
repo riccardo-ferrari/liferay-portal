@@ -989,16 +989,20 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 		List<Element> dlRepositoryEntriesElements = entityElement.elements(
 			"dl-repository-entries");
 		if (dlRepositoryEntriesElements != null) {
-			for (Element dlRepositoryEntriesElement : dlRepositoryEntriesElements) {
+			for (Element dlRepositoryEntriesElement :
+				dlRepositoryEntriesElements) {
 
-				List<Element> dlRepositoryEntryElements = Collections.emptyList();
+				List<Element> dlRepositoryEntryElements =
+								Collections.emptyList();
 
 				if (dlRepositoryEntriesElement != null) {
-					dlRepositoryEntryElements = dlRepositoryEntriesElement.elements(
-							"repository-entry");
+					dlRepositoryEntryElements =
+									dlRepositoryEntriesElement.elements(
+										"repository-entry");
 				}
 
-				for (Element repositoryEntryElement : dlRepositoryEntryElements) {
+				for (Element repositoryEntryElement :
+					dlRepositoryEntryElements) {
 					DLPortletDataHandler.importRepositoryEntry(
 							portletDataContext, repositoryEntryElement);
 				}
@@ -1026,9 +1030,9 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 				"dl-file-entries");
 		if (dlFileEntriesElements != null) {
 			for (Element dlFileEntriesElement : dlFileEntriesElements) {
-				
+
 				List<Element> dlFileEntryElements = Collections.emptyList();
-				
+
 				if (dlFileEntriesElement != null) {
 					dlFileEntryElements = dlFileEntriesElement.elements(
 							"file-entry");
@@ -1045,7 +1049,7 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 				"dl-file-ranks");
 
 		if (dlFileRanksElements != null){
-			for (Element dlFileRanksElement : dlFileRanksElements)	{
+			for (Element dlFileRanksElement : dlFileRanksElements) {
 
 				List<Element> dlFileRankElements = Collections.emptyList();
 
