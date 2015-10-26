@@ -65,6 +65,9 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 public class MonitoringFilter extends BaseFilter
 	implements PortalMonitoringControl {
 
+	public static final String MONITORING_FILTER_CALL_COUNT =
+		MonitoringFilter.class.getName()+".count";
+
 	@Override
 	public boolean isFilterEnabled() {
 		if (!super.isFilterEnabled()) {
@@ -92,6 +95,30 @@ public class MonitoringFilter extends BaseFilter
 	@Override
 	public void setMonitorPortalRequest(boolean monitorPortalRequest) {
 		_monitorPortalRequest = monitorPortalRequest;
+	}
+
+	protected int decrementCallCount(HttpServletRequest request) {
+		Integer count = (Integer) request.getAttribute(
+			MONITORING_FILTER_CALL_COUNT);
+
+		if (count == null) {
+
+			return 0;
+		} else {
+			int currentCount = count.intValue() - 1;
+
+			if (currentCount == 0) {
+				request.removeAttribute(MONITORING_FILTER_CALL_COUNT);
+
+				return currentCount;
+			}
+
+			request.setAttribute(MONITORING_FILTER_CALL_COUNT,
+				new Integer(currentCount));
+
+			return currentCount;
+		}
+
 	}
 
 	protected long getGroupId(HttpServletRequest request) {
@@ -130,6 +157,17 @@ public class MonitoringFilter extends BaseFilter
 		return _log;
 	}
 
+	protected void incrementCallCount(HttpServletRequest request) {
+		Integer count = (Integer)request.getAttribute(
+			MONITORING_FILTER_CALL_COUNT);
+		if (count == null) {
+			request.setAttribute(MONITORING_FILTER_CALL_COUNT, new Integer(1));
+		} else {
+			request.setAttribute(MONITORING_FILTER_CALL_COUNT,
+				new Integer(count.intValue() + 1));
+		}
+	}
+
 	@Override
 	protected void processFilter(
 			HttpServletRequest request, HttpServletResponse response,
@@ -138,6 +176,8 @@ public class MonitoringFilter extends BaseFilter
 
 		long companyId = PortalUtil.getCompanyId(request);
 		long groupId = getGroupId(request);
+
+		incrementCallCount(request);
 
 		PortalRequestDataSample dataSample = null;
 
@@ -187,9 +227,11 @@ public class MonitoringFilter extends BaseFilter
 				DataSampleThreadLocal.addDataSample(dataSample);
 			}
 
-			MessageBusUtil.sendMessage(
-				DestinationNames.MONITORING,
-				DataSampleThreadLocal.getDataSamples());
+			if (decrementCallCount(request) == 0) {
+				MessageBusUtil.sendMessage(
+					DestinationNames.MONITORING,
+					DataSampleThreadLocal.getDataSamples());
+			}
 		}
 	}
 
