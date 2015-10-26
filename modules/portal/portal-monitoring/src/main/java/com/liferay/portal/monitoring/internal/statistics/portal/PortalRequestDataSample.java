@@ -42,12 +42,34 @@ public class PortalRequestDataSample extends BaseDataSample {
 		return _requestURL;
 	}
 
+	public int getStatusCode() {
+		return _statusCode;
+	}
+
+	public String getUserAgent() {
+		return _userAgent;
+	}
+
+	public void setStatusCode(int statusCode) {
+		_statusCode = statusCode;
+	}
+
+	public void setUserAgent(String userAgent) {
+		_userAgent = userAgent;
+	}
+
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(5);
 
 		sb.append("{requestURL=");
 		sb.append(_requestURL);
+		sb.append(", ");
+		sb.append("statusCode=");
+		sb.append(_statusCode);
+		sb.append(", ");
+		sb.append("userAgent=");
+		sb.append(_userAgent);
 		sb.append(", ");
 		sb.append(super.toString());
 		sb.append("}");
@@ -56,5 +78,7 @@ public class PortalRequestDataSample extends BaseDataSample {
 	}
 
 	private final String _requestURL;
+	private int _statusCode;
+	private String _userAgent;
 
 }

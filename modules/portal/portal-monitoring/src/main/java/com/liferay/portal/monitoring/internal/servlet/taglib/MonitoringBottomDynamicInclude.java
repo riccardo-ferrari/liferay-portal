@@ -19,12 +19,14 @@ import aQute.bnd.annotation.metatype.Configurable;
 import com.liferay.portal.kernel.monitoring.DataSample;
 import com.liferay.portal.kernel.monitoring.DataSampleThreadLocal;
 import com.liferay.portal.kernel.monitoring.RequestStatus;
+import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.taglib.BaseDynamicInclude;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.monitoring.configuration.MonitoringConfiguration;
 import com.liferay.portal.monitoring.constants.MonitoringWebKeys;
+import com.liferay.portal.monitoring.internal.statistics.portal.PortalRequestDataSample;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -58,11 +60,15 @@ public class MonitoringBottomDynamicInclude extends BaseDynamicInclude {
 			return;
 		}
 
-		DataSample dataSample = (DataSample)request.getAttribute(
-			MonitoringWebKeys.PORTAL_REQUEST_DATA_SAMPLE);
+		PortalRequestDataSample dataSample = (PortalRequestDataSample)
+			request.getAttribute(
+				MonitoringWebKeys.PORTAL_REQUEST_DATA_SAMPLE);
 
 		if (dataSample != null) {
 			dataSample.capture(RequestStatus.SUCCESS);
+			dataSample.setStatusCode(response.getStatus());
+			dataSample.setUserAgent(
+				request.getHeader(HttpHeaders.USER_AGENT));
 
 			DataSampleThreadLocal.addDataSample(dataSample);
 		}

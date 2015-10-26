@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
-import com.liferay.portal.kernel.monitoring.DataSample;
 import com.liferay.portal.kernel.monitoring.DataSampleFactory;
 import com.liferay.portal.kernel.monitoring.DataSampleThreadLocal;
 import com.liferay.portal.kernel.monitoring.PortalMonitoringControl;
@@ -27,10 +26,12 @@ import com.liferay.portal.kernel.monitoring.PortletMonitoringControl;
 import com.liferay.portal.kernel.monitoring.RequestStatus;
 import com.liferay.portal.kernel.monitoring.ServiceMonitoringControl;
 import com.liferay.portal.kernel.servlet.BaseFilter;
+import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Layout;
+import com.liferay.portal.monitoring.internal.statistics.portal.PortalRequestDataSample;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.util.PortalUtil;
 
@@ -100,7 +101,8 @@ public class MonitoringFilter extends BaseFilter
 			return groupId;
 		}
 
-		Layout layout = (Layout) request.getAttribute(WebKeys.LAYOUT);
+		Layout layout = (Layout)request.getAttribute(WebKeys.LAYOUT);
+
 		if (layout != null) {
 			return layout.getGroupId();
 		}
@@ -137,13 +139,14 @@ public class MonitoringFilter extends BaseFilter
 		long companyId = PortalUtil.getCompanyId(request);
 		long groupId = getGroupId(request);
 
-		DataSample dataSample = null;
+		PortalRequestDataSample dataSample = null;
 
 		if (_monitorPortalRequest) {
-			dataSample = _dataSampleFactory.createPortalRequestDataSample(
-				companyId, groupId, request.getRemoteUser(),
-				request.getRequestURI(),
-				GetterUtil.getString(request.getRequestURL()));
+			dataSample = (PortalRequestDataSample)
+				_dataSampleFactory.createPortalRequestDataSample(
+					companyId, groupId, request.getRemoteUser(),
+					request.getRequestURI(),
+					GetterUtil.getString(request.getRequestURL()));
 
 			DataSampleThreadLocal.initialize();
 		}
@@ -157,8 +160,11 @@ public class MonitoringFilter extends BaseFilter
 				MonitoringFilter.class, request, response, filterChain);
 
 			if (dataSample != null) {
-				dataSample.setGroupId(getGroupId(request));
 				dataSample.capture(RequestStatus.SUCCESS);
+				dataSample.setGroupId(getGroupId(request));
+				dataSample.setStatusCode(response.getStatus());
+				dataSample.setUserAgent(
+					request.getHeader(HttpHeaders.USER_AGENT));
 			}
 		}
 		catch (Exception e) {
