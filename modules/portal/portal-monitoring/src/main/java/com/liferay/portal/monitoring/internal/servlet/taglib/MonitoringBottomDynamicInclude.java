@@ -67,8 +67,6 @@ public class MonitoringBottomDynamicInclude extends BaseDynamicInclude {
 		if (dataSample != null) {
 			dataSample.capture(RequestStatus.SUCCESS);
 			dataSample.setStatusCode(response.getStatus());
-			dataSample.setUserAgent(
-				request.getHeader(HttpHeaders.USER_AGENT));
 
 			DataSampleThreadLocal.addDataSample(dataSample);
 		}

@@ -26,16 +26,28 @@ import com.liferay.portal.monitoring.internal.BaseDataSample;
 public class PortalRequestDataSample extends BaseDataSample {
 
 	public PortalRequestDataSample(
-		long companyId, long groupId, String user, String requestURI,
-		String requestURL) {
+		long companyId, long groupId, String user, String referer,
+		String remoteIP, String requestURI, String requestURL,
+		String userAgent) {
 
+		_referer = referer;
+		_remoteIP = remoteIP;
 		_requestURL = requestURL;
+		_userAgent = userAgent;
 
 		setCompanyId(companyId);
 		setGroupId(groupId);
 		setName(requestURI);
 		setNamespace(MonitorNames.PORTAL);
 		setUser(user);
+	}
+
+	public String getReferer() {
+		return _referer;
+	}
+
+	public String getRemoteIP() {
+		return _remoteIP;
 	}
 
 	public String getRequestURL() {
@@ -54,14 +66,16 @@ public class PortalRequestDataSample extends BaseDataSample {
 		_statusCode = statusCode;
 	}
 
-	public void setUserAgent(String userAgent) {
-		_userAgent = userAgent;
-	}
-
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(5);
 
+		sb.append("referer=");
+		sb.append(_referer);
+		sb.append(", ");
+		sb.append("remoteIP=");
+		sb.append(_remoteIP);
+		sb.append(", ");
 		sb.append("{requestURL=");
 		sb.append(_requestURL);
 		sb.append(", ");
@@ -77,8 +91,10 @@ public class PortalRequestDataSample extends BaseDataSample {
 		return sb.toString();
 	}
 
+	private final String _referer;
+	private final String _remoteIP;
 	private final String _requestURL;
+	private final String _userAgent;
 	private int _statusCode;
-	private String _userAgent;
 
 }

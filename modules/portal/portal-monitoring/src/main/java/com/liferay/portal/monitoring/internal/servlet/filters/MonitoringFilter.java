@@ -185,8 +185,11 @@ public class MonitoringFilter extends BaseFilter
 			dataSample = (PortalRequestDataSample)
 				_dataSampleFactory.createPortalRequestDataSample(
 					companyId, groupId, request.getRemoteUser(),
+					request.getHeader(HttpHeaders.REFERER),
+					request.getRemoteAddr(),
 					request.getRequestURI(),
-					GetterUtil.getString(request.getRequestURL()));
+					GetterUtil.getString(request.getRequestURL()),
+					request.getHeader(HttpHeaders.USER_AGENT));
 
 			DataSampleThreadLocal.initialize();
 		}
@@ -203,8 +206,6 @@ public class MonitoringFilter extends BaseFilter
 				dataSample.capture(RequestStatus.SUCCESS);
 				dataSample.setGroupId(getGroupId(request));
 				dataSample.setStatusCode(response.getStatus());
-				dataSample.setUserAgent(
-					request.getHeader(HttpHeaders.USER_AGENT));
 			}
 		}
 		catch (Exception e) {
