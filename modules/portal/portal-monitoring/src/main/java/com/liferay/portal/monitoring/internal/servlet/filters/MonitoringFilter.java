@@ -36,6 +36,7 @@ import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.util.PortalUtil;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -97,28 +98,9 @@ public class MonitoringFilter extends BaseFilter
 		_monitorPortalRequest = monitorPortalRequest;
 	}
 
-	protected int decrementCallCount(HttpServletRequest request) {
-		Integer count = (Integer) request.getAttribute(
-			MONITORING_FILTER_CALL_COUNT);
+	protected int decrementProcessFilterCount() {
 
-		if (count == null) {
-
-			return 0;
-		} else {
-			int currentCount = count.intValue() - 1;
-
-			if (currentCount == 0) {
-				request.removeAttribute(MONITORING_FILTER_CALL_COUNT);
-
-				return currentCount;
-			}
-
-			request.setAttribute(MONITORING_FILTER_CALL_COUNT,
-				new Integer(currentCount));
-
-			return currentCount;
-		}
-
+		return _processFilterCount.get().decrementAndGet();
 	}
 
 	protected long getGroupId(HttpServletRequest request) {
@@ -157,15 +139,9 @@ public class MonitoringFilter extends BaseFilter
 		return _log;
 	}
 
-	protected void incrementCallCount(HttpServletRequest request) {
-		Integer count = (Integer)request.getAttribute(
-			MONITORING_FILTER_CALL_COUNT);
-		if (count == null) {
-			request.setAttribute(MONITORING_FILTER_CALL_COUNT, new Integer(1));
-		} else {
-			request.setAttribute(MONITORING_FILTER_CALL_COUNT,
-				new Integer(count.intValue() + 1));
-		}
+	protected void incrementProcessFilterCount() {
+
+		_processFilterCount.get().incrementAndGet();
 	}
 
 	@Override
@@ -177,7 +153,7 @@ public class MonitoringFilter extends BaseFilter
 		long companyId = PortalUtil.getCompanyId(request);
 		long groupId = getGroupId(request);
 
-		incrementCallCount(request);
+		incrementProcessFilterCount();
 
 		PortalRequestDataSample dataSample = null;
 
@@ -228,10 +204,11 @@ public class MonitoringFilter extends BaseFilter
 				DataSampleThreadLocal.addDataSample(dataSample);
 			}
 
-			if (decrementCallCount(request) == 0) {
+			if (decrementProcessFilterCount() == 0) {
 				MessageBusUtil.sendMessage(
 					DestinationNames.MONITORING,
 					DataSampleThreadLocal.getDataSamples());
+				_processFilterCount.remove();
 			}
 		}
 	}
@@ -271,6 +248,16 @@ public class MonitoringFilter extends BaseFilter
 
 		_layoutLocalService = null;
 	}
+
+	private static ThreadLocal<AtomicInteger> _processFilterCount =
+		new ThreadLocal<AtomicInteger>() {
+
+		@Override
+		protected AtomicInteger initialValue() {
+
+			return new AtomicInteger(0);
+		}
+	};
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		MonitoringFilter.class);
