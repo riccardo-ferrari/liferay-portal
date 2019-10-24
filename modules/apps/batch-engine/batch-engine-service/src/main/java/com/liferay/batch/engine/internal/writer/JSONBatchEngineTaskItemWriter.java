@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,7 +36,17 @@ public class JSONBatchEngineTaskItemWriter
 
 		_outputStream = outputStream;
 
-		ObjectWriter objectWriter = _objectMapper.writer();
+		ObjectMapper objectMapper = new ObjectMapper() {
+			{
+				disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+			}
+		};
+
+		SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
+
+		simpleFilterProvider.setFailOnUnknownId(false);
+
+		ObjectWriter objectWriter = objectMapper.writer(simpleFilterProvider);
 
 		_sequenceWriter = objectWriter.writeValuesAsArray(_outputStream);
 	}
@@ -51,12 +62,6 @@ public class JSONBatchEngineTaskItemWriter
 	public void write(Collection<?> items) throws Exception {
 		_sequenceWriter.writeAll(items);
 	}
-
-	private static final ObjectMapper _objectMapper = new ObjectMapper() {
-		{
-			disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		}
-	};
 
 	private final OutputStream _outputStream;
 	private final SequenceWriter _sequenceWriter;

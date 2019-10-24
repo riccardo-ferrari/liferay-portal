@@ -15,7 +15,9 @@
 package com.liferay.batch.engine.internal.writer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import com.liferay.petra.io.unsync.UnsyncPrintWriter;
 import com.liferay.petra.string.StringPool;
@@ -33,6 +35,18 @@ public class JSONLBatchEngineTaskItemWriter
 
 	public JSONLBatchEngineTaskItemWriter(OutputStream outputStream) {
 		_unsyncPrintWriter = new UnsyncPrintWriter(outputStream);
+
+		ObjectMapper objectMapper = new ObjectMapper() {
+			{
+				disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+			}
+		};
+
+		SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
+
+		simpleFilterProvider.setFailOnUnknownId(false);
+
+		_objectWriter = objectMapper.writer(simpleFilterProvider);
 	}
 
 	@Override
@@ -43,17 +57,12 @@ public class JSONLBatchEngineTaskItemWriter
 	@Override
 	public void write(Collection<?> items) throws Exception {
 		for (Object item : items) {
-			_unsyncPrintWriter.write(_objectMapper.writeValueAsString(item));
+			_unsyncPrintWriter.write(_objectWriter.writeValueAsString(item));
 			_unsyncPrintWriter.write(StringPool.NEW_LINE);
 		}
 	}
 
-	private static final ObjectMapper _objectMapper = new ObjectMapper() {
-		{
-			disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		}
-	};
-
+	private final ObjectWriter _objectWriter;
 	private final UnsyncPrintWriter _unsyncPrintWriter;
 
 }
