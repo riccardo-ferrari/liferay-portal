@@ -57,7 +57,7 @@ public class JSONLBatchEngineTaskItemWriterTest
 		StringBundler sb = new StringBundler();
 
 		for (Item item : items) {
-			sb.append(objectMapper.writeValueAsString(item));
+			sb.append(objectWriter.writeValueAsString(item));
 			sb.append(StringPool.NEW_LINE);
 		}
 

@@ -44,7 +44,7 @@ public class JSONBatchEngineTaskItemWriterTest
 		String content = unsyncByteArrayOutputStream.toString();
 
 		Assert.assertEquals(
-			objectMapper.writeValueAsString(getItems()), content);
+			objectWriter.writeValueAsString(getItems()), content);
 	}
 
 }

@@ -14,8 +14,11 @@
 
 package com.liferay.batch.engine.internal.writer;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,11 +31,27 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 /**
  * @author Ivica Cardic
  */
 public abstract class BaseBatchEngineTaskItemWriterTestCase {
+
+	@BeforeClass
+	public static void setUpClass() {
+		ObjectMapper objectMapper = new ObjectMapper() {
+			{
+				disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+			}
+		};
+
+		SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
+
+		simpleFilterProvider.setFailOnUnknownId(false);
+
+		objectWriter = objectMapper.writer(simpleFilterProvider);
+	}
 
 	@Before
 	public void setUp() {
@@ -53,6 +72,7 @@ public abstract class BaseBatchEngineTaskItemWriterTestCase {
 
 	}
 
+	@JsonFilter("Liferay.Vulcan")
 	public static class Item extends BaseItem {
 
 		public Date getCreateDate() {
@@ -146,11 +166,7 @@ public abstract class BaseBatchEngineTaskItemWriterTestCase {
 
 	protected static final DateFormat dateFormat = new SimpleDateFormat(
 		"yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-	protected static final ObjectMapper objectMapper = new ObjectMapper() {
-		{
-			disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		}
-	};
+	protected static ObjectWriter objectWriter;
 
 	private Date _createDate;
 
