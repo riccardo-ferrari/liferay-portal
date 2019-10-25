@@ -24,10 +24,14 @@ import com.liferay.batch.engine.service.BatchEngineTaskLocalService;
 import com.liferay.headless.batch.engine.dto.v1_0.ExportTask;
 import com.liferay.headless.batch.engine.resource.v1_0.ExportTaskResource;
 import com.liferay.petra.executor.PortalExecutorManager;
+import com.liferay.petra.io.StreamUtil;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.Serializable;
+
+import java.sql.Blob;
+import java.sql.SQLException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +39,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -70,6 +82,49 @@ public class ExportTaskResourceImpl extends BaseExportTaskResourceImpl {
 	public ExportTask getExportTask(Long exportTaskId) throws Exception {
 		return _toExportTask(
 			_batchEngineTaskLocalService.getBatchEngineTask(exportTaskId));
+	}
+
+	@GET
+	@Path("/export-task/{exportTaskId}/content/")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getExportTaskContent(
+			@PathParam("exportTaskId") Long exportTaskId)
+		throws Exception {
+
+		BatchEngineTask batchEngineTask =
+			_batchEngineTaskLocalService.getBatchEngineTask(exportTaskId);
+
+		BatchEngineTaskExecuteStatus batchEngineTaskExecuteStatus =
+			BatchEngineTaskExecuteStatus.valueOf(
+				batchEngineTask.getExecuteStatus());
+
+		if (batchEngineTaskExecuteStatus ==
+				BatchEngineTaskExecuteStatus.COMPLETED) {
+
+			Blob content = batchEngineTask.getContent();
+
+			StreamingOutput stream = outputStream -> {
+				try {
+					StreamUtil.transfer(
+						content.getBinaryStream(), outputStream);
+				}
+				catch (SQLException sqle) {
+					throw new WebApplicationException(sqle);
+				}
+			};
+
+			return Response.ok(
+				stream
+			).header(
+				"content-disposition",
+				"attachment; filename=export." +
+					StringUtil.toLowerCase(batchEngineTask.getContentType())
+			).build();
+		}
+
+		return Response.status(
+			Response.Status.NOT_FOUND
+		).build();
 	}
 
 	@Override

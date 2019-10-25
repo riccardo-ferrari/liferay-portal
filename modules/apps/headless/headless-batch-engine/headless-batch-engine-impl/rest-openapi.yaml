@@ -177,6 +177,26 @@ paths:
                     description:
                         ""
             tags: ["ExportTask"]
+    /export-task/{exportTaskId}/content/:
+        #@review
+        get:
+            description:
+                Retrieves the exported content.
+            operationId: getExportTaskContent
+            parameters:
+                - in: path
+                  name: exportTaskId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    description:
+                        A PDF file.
+                    schema:
+                        type: file
+            tags: ["ExportTask"]
     /import-task/{className}/{version}:
         #@review
         delete:
