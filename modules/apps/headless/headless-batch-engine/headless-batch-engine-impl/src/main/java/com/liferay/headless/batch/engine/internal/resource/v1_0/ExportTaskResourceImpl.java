@@ -59,7 +59,7 @@ public class ExportTaskResourceImpl extends BaseExportTaskResourceImpl {
 			ConfigurableUtil.createConfigurable(
 				BatchEngineTaskConfiguration.class, properties);
 
-		_batchSize = batchEngineTaskConfiguration.batchSize();
+		_batchSize = batchEngineTaskConfiguration.exportBatchSize();
 
 		if (_batchSize <= 0) {
 			_batchSize = 1;
