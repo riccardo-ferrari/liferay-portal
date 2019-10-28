@@ -12,7 +12,7 @@ create table BatchEngineTask (
 	content BLOB,
 	contentType VARCHAR(75) null,
 	endTime DATE null,
-	errorMessage VARCHAR(75) null,
+	errorMessage VARCHAR(1000) null,
 	executeStatus VARCHAR(75) null,
 	fieldNameMapping TEXT null,
 	operation VARCHAR(75) null,
