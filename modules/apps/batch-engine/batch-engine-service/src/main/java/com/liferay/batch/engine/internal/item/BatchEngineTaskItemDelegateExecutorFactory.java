@@ -44,14 +44,15 @@ public class BatchEngineTaskItemDelegateExecutorFactory {
 	}
 
 	public BatchEngineTaskItemDelegateExecutor create(
-			String className, Company company,
-			Map<String, Serializable> parameters, User user)
+			String batchEngineTaskItemDelegateName, String className,
+			Company company, Map<String, Serializable> parameters, User user)
 		throws ReflectiveOperationException {
 
 		BatchEngineTaskItemDelegateExecutorCreator
 			batchEngineTaskItemDelegateExecutorCreator =
 				_batchEngineTaskMethodRegistry.
-					getBatchEngineTaskItemDelegateExecutorCreator(className);
+					getBatchEngineTaskItemDelegateExecutorCreator(
+						className, batchEngineTaskItemDelegateName);
 
 		if (batchEngineTaskItemDelegateExecutorCreator == null) {
 			throw new IllegalStateException(
