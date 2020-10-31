@@ -27,11 +27,15 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -48,6 +52,19 @@ import org.osgi.service.component.annotations.ServiceScope;
 )
 public class AccountCategoryForecastResourceImpl
 	extends BaseAccountCategoryForecastResourceImpl {
+
+	@Override
+	public void create(
+			Collection<AccountCategoryForecast> accountCategoryForecasts,
+			Map<String, Serializable> parameters)
+		throws Exception {
+
+		for (AccountCategoryForecast accountCategoryForecast :
+				accountCategoryForecasts) {
+
+			_createItem(accountCategoryForecast);
+		}
+	}
 
 	@Override
 	public Page<AccountCategoryForecast>
@@ -100,6 +117,32 @@ public class AccountCategoryForecastResourceImpl
 		return Page.of(
 			_toAccountCategoryForecasts(assetCategoryCommerceMLForecasts),
 			pagination, totalItems);
+	}
+
+	private void _createItem(AccountCategoryForecast item) throws Exception {
+		AssetCategoryCommerceMLForecast assetCategoryCommerceMLForecast =
+			_assetCategoryCommerceMLForecastManager.create();
+
+		if (item.getActual() != null) {
+			assetCategoryCommerceMLForecast.setActual(item.getActual());
+		}
+
+		assetCategoryCommerceMLForecast.setAssetCategoryId(item.getCategory());
+		assetCategoryCommerceMLForecast.setCommerceAccountId(item.getAccount());
+		assetCategoryCommerceMLForecast.setCompanyId(
+			contextCompany.getCompanyId());
+		assetCategoryCommerceMLForecast.setForecast(item.getForecast());
+		assetCategoryCommerceMLForecast.setForecastLowerBound(
+			item.getForecastLowerBound());
+		assetCategoryCommerceMLForecast.setForecastUpperBound(
+			item.getForecastUpperBound());
+		assetCategoryCommerceMLForecast.setPeriod("month");
+		assetCategoryCommerceMLForecast.setScope("asset-category");
+		assetCategoryCommerceMLForecast.setTarget("revenue");
+		assetCategoryCommerceMLForecast.setTimestamp(item.getTimestamp());
+
+		_assetCategoryCommerceMLForecastManager.
+			addAssetCategoryCommerceMLForecast(assetCategoryCommerceMLForecast);
 	}
 
 	private List<AccountCategoryForecast> _toAccountCategoryForecasts(
