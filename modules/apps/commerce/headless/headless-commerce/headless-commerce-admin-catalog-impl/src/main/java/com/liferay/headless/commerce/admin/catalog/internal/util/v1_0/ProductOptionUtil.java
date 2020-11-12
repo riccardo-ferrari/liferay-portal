@@ -23,6 +23,13 @@ import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Alessio Antonio Rendina
@@ -35,8 +42,51 @@ public class ProductOptionUtil {
 			long cpDefinitionId, ServiceContext serviceContext)
 		throws PortalException {
 
-		CPOption cpOption = cpOptionService.getCPOption(
-			productOption.getOptionId());
+		CPOption cpOption = cpOptionService.fetchCPOption(
+			serviceContext.getCompanyId(), productOption.getKey());
+
+		if (cpOption == null) {
+			Map<String, String> productOptionName = productOption.getName();
+
+			Set<Map.Entry<String, String>> productOptionNameEntrySet =
+				productOptionName.entrySet();
+
+			Stream<Map.Entry<String, String>> productOptionNameStream =
+				productOptionNameEntrySet.stream();
+
+			Map<Locale, String> localeNameMap = productOptionNameStream.collect(
+				Collectors.toMap(
+					l -> LocaleUtil.fromLanguageId(l.getKey()),
+					Map.Entry::getValue));
+
+			Map<String, String> productOptionDescription =
+				productOption.getDescription();
+
+			Map<Locale, String> localeDescriptionMap = null;
+
+			if (productOptionDescription != null) {
+				Set<Map.Entry<String, String>>
+					productOptionDescriptionEntrySet =
+						productOptionDescription.entrySet();
+
+				Stream<Map.Entry<String, String>>
+					productOptionDescriptionStream =
+						productOptionDescriptionEntrySet.stream();
+
+				localeDescriptionMap = productOptionDescriptionStream.collect(
+					Collectors.toMap(
+						l -> LocaleUtil.fromLanguageId(l.getKey()),
+						Map.Entry::getValue));
+			}
+
+			cpOption = cpOptionService.addCPOption(
+				localeNameMap, localeDescriptionMap,
+				productOption.getFieldType(),
+				GetterUtil.getBoolean(productOption.getFacetable()),
+				GetterUtil.getBoolean(productOption.getRequired()),
+				GetterUtil.getBoolean(productOption.getSkuContributor()),
+				productOption.getKey(), serviceContext);
+		}
 
 		CPDefinitionOptionRel cpDefinitionOptionRel =
 			cpDefinitionOptionRelService.fetchCPDefinitionOptionRel(
