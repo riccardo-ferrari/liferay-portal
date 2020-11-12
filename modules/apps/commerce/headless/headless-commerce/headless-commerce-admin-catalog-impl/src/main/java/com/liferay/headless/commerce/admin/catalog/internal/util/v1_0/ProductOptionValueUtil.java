@@ -49,7 +49,8 @@ public class ProductOptionValueUtil {
 			cpDefinitionOptionValueRel =
 				cpDefinitionOptionValueRelService.
 					updateCPDefinitionOptionValueRel(
-						cpDefinitionOptionValueRel.getCPDefinitionOptionRelId(),
+						cpDefinitionOptionValueRel.
+							getCPDefinitionOptionValueRelId(),
 						LanguageUtils.getLocalizedMap(
 							productOptionValue.getName()),
 						GetterUtil.get(
