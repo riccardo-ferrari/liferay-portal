@@ -14,13 +14,18 @@
 
 package com.liferay.headless.commerce.admin.catalog.internal.resource.v1_0;
 
+import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.commerce.product.exception.NoSuchCPDefinitionException;
 import com.liferay.commerce.product.exception.NoSuchCatalogException;
 import com.liferay.commerce.product.model.CPAttachmentFileEntryConstants;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
 import com.liferay.commerce.product.model.CPDefinitionSpecificationOptionValue;
+import com.liferay.commerce.product.model.CPOption;
+import com.liferay.commerce.product.model.CPOptionValue;
+import com.liferay.commerce.product.model.CPSpecificationOption;
 import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.service.CPAttachmentFileEntryService;
 import com.liferay.commerce.product.service.CPDefinitionLinkService;
@@ -30,6 +35,7 @@ import com.liferay.commerce.product.service.CPDefinitionService;
 import com.liferay.commerce.product.service.CPDefinitionSpecificationOptionValueService;
 import com.liferay.commerce.product.service.CPInstanceService;
 import com.liferay.commerce.product.service.CPOptionService;
+import com.liferay.commerce.product.service.CPOptionValueService;
 import com.liferay.commerce.product.service.CPSpecificationOptionService;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.service.CPDefinitionInventoryService;
@@ -49,6 +55,7 @@ import com.liferay.headless.commerce.admin.catalog.internal.dto.v1_0.converter.P
 import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.ProductHelper;
 import com.liferay.headless.commerce.admin.catalog.internal.odata.entity.v1_0.ProductEntityModel;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.AttachmentUtil;
+import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.CategoryUtil;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.ProductConfigurationUtil;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.ProductOptionUtil;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.ProductOptionValueUtil;
@@ -64,6 +71,7 @@ import com.liferay.headless.commerce.core.util.DateConfig;
 import com.liferay.headless.commerce.core.util.ExpandoUtil;
 import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.headless.commerce.core.util.ServiceContextHelper;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
@@ -72,6 +80,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -83,9 +92,16 @@ import com.liferay.upload.UniqueFileNameProvider;
 
 import java.io.Serializable;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -474,6 +490,29 @@ public class ProductResourceImpl
 			for (ProductSpecification productSpecification :
 					productSpecifications) {
 
+				CPSpecificationOption cpSpecificationOption =
+					_cpSpecificationOptionService.fetchCPSpecificationOption(
+						serviceContext.getCompanyId(),
+						productSpecification.getSpecificationKey());
+
+				if (cpSpecificationOption == null) {
+					Locale locale = LocaleUtil.getSiteDefault();
+
+					Map<Locale, String> titleMap = Collections.singletonMap(
+						locale, productSpecification.getSpecificationKey());
+
+					cpSpecificationOption =
+						_cpSpecificationOptionService.addCPSpecificationOption(
+							GetterUtil.getLong(
+								productSpecification.getOptionCategoryId()),
+							titleMap, null, false,
+							productSpecification.getSpecificationKey(),
+							serviceContext);
+
+					productSpecification.setSpecificationId(
+						cpSpecificationOption.getCPSpecificationOptionId());
+				}
+
 				CPDefinitionSpecificationOptionValue
 					cpDefinitionSpecificationOptionValue = null;
 
@@ -508,6 +547,9 @@ public class ProductResourceImpl
 
 		if (productOptions != null) {
 			for (ProductOption productOption : productOptions) {
+
+				// Create CPDefinition CPOption relation
+
 				CPDefinitionOptionRel cpDefinitionOptionRel =
 					ProductOptionUtil.upsertCPDefinitionOptionRel(
 						_cpDefinitionOptionRelService, _cpOptionService,
@@ -520,6 +562,56 @@ public class ProductResourceImpl
 				if (productOptionValues != null) {
 					for (ProductOptionValue productOptionValue :
 							productOptionValues) {
+
+						// Add Option Value
+
+						CPOption cpOption = cpDefinitionOptionRel.getCPOption();
+
+						// TODO: upsert do not work w/out external ref code
+
+						List<CPOptionValue> cpOptionValues =
+							_cpOptionValueService.getCPOptionValues(
+								cpOption.getCPOptionId(), -1, -1);
+
+						boolean optionValueExist = false;
+
+						for (CPOptionValue cpOptionValue : cpOptionValues) {
+							String cpOptionValueKey = cpOptionValue.getKey();
+
+							if (cpOptionValueKey.equals(
+									productOptionValue.getKey())) {
+
+								optionValueExist = true;
+
+								break;
+							}
+						}
+
+						if (!optionValueExist) {
+							Map<String, String> productOptionValueName =
+								productOptionValue.getName();
+
+							Set<Map.Entry<String, String>>
+								productOptionvalueNameEntrySet =
+									productOptionValueName.entrySet();
+
+							Stream<Map.Entry<String, String>>
+								productOptionValueNameStream =
+									productOptionvalueNameEntrySet.stream();
+
+							Map<Locale, String> localeNameMap =
+								productOptionValueNameStream.collect(
+									Collectors.toMap(
+										l -> LocaleUtil.fromLanguageId(
+											l.getKey()),
+										Map.Entry::getValue));
+
+							_cpOptionValueService.addCPOptionValue(
+								cpOption.getCPOptionId(), localeNameMap,
+								GetterUtil.getDouble(
+									productOptionValue.getPriority()),
+								productOptionValue.getKey(), serviceContext);
+						}
 
 						ProductOptionValueUtil.upsertCPDefinitionOptionValueRel(
 							_cpDefinitionOptionValueRelService,
@@ -561,9 +653,35 @@ public class ProductResourceImpl
 		Category[] categories = product.getCategories();
 
 		if (categories != null) {
+			Stream<Category> categoryStream = Arrays.stream(categories);
 
-			// TODO upsert categories
+			long[] assetCategoryIds = categoryStream.map(
+				c -> {
+					AssetCategory assetCategory = null;
 
+					try {
+						c.setVocabulary("Movielens");
+
+						assetCategory = CategoryUtil.upsertCategory(
+							_assetCategoryLocalService,
+							_assetVocabularyLocalService, c,
+							_serviceContextHelper.getServiceContext(
+								contextCompany.getGroupId()));
+					}
+					catch (PortalException portalException) {
+						throw new RuntimeException(portalException);
+					}
+
+					return assetCategory.getCategoryId();
+				}
+			).mapToLong(
+				Long::longValue
+			).toArray();
+
+			serviceContext.setAssetCategoryIds(assetCategoryIds);
+
+			_cpDefinitionService.updateCPDefinitionCategorization(
+				cpDefinition.getCPDefinitionId(), serviceContext);
 		}
 
 		return cpDefinition;
@@ -785,6 +903,9 @@ public class ProductResourceImpl
 	private AssetCategoryLocalService _assetCategoryLocalService;
 
 	@Reference
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
+
+	@Reference
 	private ClassNameLocalService _classNameLocalService;
 
 	@Reference
@@ -818,6 +939,9 @@ public class ProductResourceImpl
 
 	@Reference
 	private CPOptionService _cpOptionService;
+
+	@Reference
+	private CPOptionValueService _cpOptionValueService;
 
 	@Reference
 	private CPSpecificationOptionService _cpSpecificationOptionService;
