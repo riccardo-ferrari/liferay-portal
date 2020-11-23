@@ -24,6 +24,8 @@ import com.liferay.commerce.service.CommerceOrderItemService;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.headless.commerce.admin.order.dto.v1_0.OrderItem;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
@@ -60,6 +62,17 @@ public class OrderItemUtil {
 			cpInstance = cpInstanceService.fetchByExternalReferenceCode(
 				orderItem.getSkuExternalReferenceCode(),
 				serviceContext.getCompanyId());
+		}
+
+		if (cpInstance == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					String.format(
+						"Unable to fetch product instance SKU: %s",
+						orderItem.getSkuExternalReferenceCode()));
+			}
+
+			return null;
 		}
 
 		CommerceOrderItem commerceOrderItem =
@@ -156,4 +169,6 @@ public class OrderItemUtil {
 		return commerceOrderItem;
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		OrderItemUtil.class);
 }
