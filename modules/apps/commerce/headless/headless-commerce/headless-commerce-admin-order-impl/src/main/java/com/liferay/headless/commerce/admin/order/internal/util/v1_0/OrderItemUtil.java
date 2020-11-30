@@ -162,6 +162,6 @@ public class OrderItemUtil {
 		return commerceOrderItem;
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		OrderItemUtil.class);
+	private static final Log _log = LogFactoryUtil.getLog(OrderItemUtil.class);
+
 }
