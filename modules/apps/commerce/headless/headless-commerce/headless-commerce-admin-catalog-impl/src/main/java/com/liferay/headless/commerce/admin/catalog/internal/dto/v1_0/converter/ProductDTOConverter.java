@@ -88,6 +88,7 @@ public class ProductDTOConverter
 				actions = dtoConverterContext.getActions();
 				active = !cpDefinition.isInactive();
 				catalogId = _getCommerceCatalogId(cpDefinition);
+				channelFilter = cpDefinition.getChannelFilterEnabled();
 				createDate = cpDefinition.getCreateDate();
 				description = LanguageUtils.getLanguageIdMap(
 					cpDefinition.getDescriptionMap());
