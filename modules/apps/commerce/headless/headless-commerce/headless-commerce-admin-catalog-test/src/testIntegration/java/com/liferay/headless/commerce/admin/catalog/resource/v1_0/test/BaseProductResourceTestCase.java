@@ -907,6 +907,22 @@ public abstract class BaseProductResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("channelFilter", additionalAssertFieldName)) {
+				if (product.getChannelFilter() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("channels", additionalAssertFieldName)) {
+				if (product.getChannels() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("configuration", additionalAssertFieldName)) {
 				if (product.getConfiguration() == null) {
 					valid = false;
@@ -1317,6 +1333,27 @@ public abstract class BaseProductResourceTestCase {
 			if (Objects.equals("categories", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						product1.getCategories(), product2.getCategories())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("channelFilter", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						product1.getChannelFilter(),
+						product2.getChannelFilter())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("channels", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						product1.getChannels(), product2.getChannels())) {
 
 					return false;
 				}
@@ -1792,6 +1829,16 @@ public abstract class BaseProductResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("channelFilter")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("channels")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("configuration")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -2125,6 +2172,7 @@ public abstract class BaseProductResourceTestCase {
 			{
 				active = RandomTestUtil.randomBoolean();
 				catalogId = RandomTestUtil.randomLong();
+				channelFilter = RandomTestUtil.randomBoolean();
 				createDate = RandomTestUtil.nextDate();
 				defaultSku = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());

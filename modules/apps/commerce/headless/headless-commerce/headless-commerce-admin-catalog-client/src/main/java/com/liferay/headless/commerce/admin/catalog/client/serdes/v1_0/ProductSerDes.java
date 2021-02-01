@@ -16,6 +16,7 @@ package com.liferay.headless.commerce.admin.catalog.client.serdes.v1_0;
 
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Attachment;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Category;
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Channel;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.ProductOption;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.ProductSpecification;
@@ -139,6 +140,36 @@ public class ProductSerDes {
 				sb.append(String.valueOf(product.getCategories()[i]));
 
 				if ((i + 1) < product.getCategories().length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
+		if (product.getChannelFilter() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"channelFilter\": ");
+
+			sb.append(product.getChannelFilter());
+		}
+
+		if (product.getChannels() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"channels\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < product.getChannels().length; i++) {
+				sb.append(String.valueOf(product.getChannels()[i]));
+
+				if ((i + 1) < product.getChannels().length) {
 					sb.append(", ");
 				}
 			}
@@ -648,6 +679,21 @@ public class ProductSerDes {
 			map.put("categories", String.valueOf(product.getCategories()));
 		}
 
+		if (product.getChannelFilter() == null) {
+			map.put("channelFilter", null);
+		}
+		else {
+			map.put(
+				"channelFilter", String.valueOf(product.getChannelFilter()));
+		}
+
+		if (product.getChannels() == null) {
+			map.put("channels", null);
+		}
+		else {
+			map.put("channels", String.valueOf(product.getChannels()));
+		}
+
 		if (product.getConfiguration() == null) {
 			map.put("configuration", null);
 		}
@@ -974,6 +1020,23 @@ public class ProductSerDes {
 							object -> CategorySerDes.toDTO((String)object)
 						).toArray(
 							size -> new Category[size]
+						));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "channelFilter")) {
+				if (jsonParserFieldValue != null) {
+					product.setChannelFilter((Boolean)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "channels")) {
+				if (jsonParserFieldValue != null) {
+					product.setChannels(
+						Stream.of(
+							toStrings((Object[])jsonParserFieldValue)
+						).map(
+							object -> ChannelSerDes.toDTO((String)object)
+						).toArray(
+							size -> new Channel[size]
 						));
 				}
 			}
