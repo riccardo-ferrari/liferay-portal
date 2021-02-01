@@ -163,6 +163,48 @@ public class Product implements Cloneable, Serializable {
 
 	protected Category[] categories;
 
+	public Boolean getChannelFilter() {
+		return channelFilter;
+	}
+
+	public void setChannelFilter(Boolean channelFilter) {
+		this.channelFilter = channelFilter;
+	}
+
+	public void setChannelFilter(
+		UnsafeSupplier<Boolean, Exception> channelFilterUnsafeSupplier) {
+
+		try {
+			channelFilter = channelFilterUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Boolean channelFilter;
+
+	public Channel[] getChannels() {
+		return channels;
+	}
+
+	public void setChannels(Channel[] channels) {
+		this.channels = channels;
+	}
+
+	public void setChannels(
+		UnsafeSupplier<Channel[], Exception> channelsUnsafeSupplier) {
+
+		try {
+			channels = channelsUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Channel[] channels;
+
 	public ProductConfiguration getConfiguration() {
 		return configuration;
 	}

@@ -238,6 +238,63 @@ public class Product implements Serializable {
 	protected Category[] categories;
 
 	@Schema
+	public Boolean getChannelFilter() {
+		return channelFilter;
+	}
+
+	public void setChannelFilter(Boolean channelFilter) {
+		this.channelFilter = channelFilter;
+	}
+
+	@JsonIgnore
+	public void setChannelFilter(
+		UnsafeSupplier<Boolean, Exception> channelFilterUnsafeSupplier) {
+
+		try {
+			channelFilter = channelFilterUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean channelFilter;
+
+	@Schema
+	@Valid
+	public Channel[] getChannels() {
+		return channels;
+	}
+
+	public void setChannels(Channel[] channels) {
+		this.channels = channels;
+	}
+
+	@JsonIgnore
+	public void setChannels(
+		UnsafeSupplier<Channel[], Exception> channelsUnsafeSupplier) {
+
+		try {
+			channels = channelsUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Channel[] channels;
+
+	@Schema
 	@Valid
 	public ProductConfiguration getConfiguration() {
 		return configuration;
@@ -1300,6 +1357,36 @@ public class Product implements Serializable {
 				sb.append(String.valueOf(categories[i]));
 
 				if ((i + 1) < categories.length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
+		if (channelFilter != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"channelFilter\": ");
+
+			sb.append(channelFilter);
+		}
+
+		if (channels != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"channels\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < channels.length; i++) {
+				sb.append(String.valueOf(channels[i]));
+
+				if ((i + 1) < channels.length) {
 					sb.append(", ");
 				}
 			}

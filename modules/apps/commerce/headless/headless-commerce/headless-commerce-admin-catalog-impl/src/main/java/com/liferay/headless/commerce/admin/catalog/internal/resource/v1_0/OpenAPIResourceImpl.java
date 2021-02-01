@@ -86,6 +86,8 @@ public class OpenAPIResourceImpl {
 
 			add(CategoryResourceImpl.class);
 
+			add(ChannelResourceImpl.class);
+
 			add(OptionResourceImpl.class);
 
 			add(OptionCategoryResourceImpl.class);
