@@ -14,21 +14,15 @@
 
 package com.liferay.headless.commerce.admin.catalog.internal.resource.v1_0;
 
-import com.liferay.commerce.product.model.CPDefinition;
-import com.liferay.commerce.product.model.CommerceChannel;
-import com.liferay.commerce.product.model.CommerceChannelRel;
-import com.liferay.commerce.product.service.CPDefinitionService;
-import com.liferay.commerce.product.service.CommerceChannelRelService;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Channel;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Product;
+import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.ChannelHelper;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ChannelResource;
 import com.liferay.portal.vulcan.fields.NestedField;
 import com.liferay.portal.vulcan.fields.NestedFieldId;
 import com.liferay.portal.vulcan.fields.NestedFieldSupport;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
-
-import java.util.Collections;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -52,49 +46,10 @@ public class ChannelResourceImpl
 			@NestedFieldId(value = "productId") Long id, Pagination pagination)
 		throws Exception {
 
-		CPDefinition cpDefinition =
-			_cpDefinitionService.fetchCPDefinitionByCProductId(id);
-
-		if (cpDefinition == null) {
-			return Page.of(Collections.emptyList());
-		}
-
-		int commerceChannelRelsCount =
-			_commerceChannelRelService.getCommerceChannelRelsCount(
-				CPDefinition.class.getName(), cpDefinition.getCPDefinitionId());
-
-		return Page.of(
-			transform(
-				_commerceChannelRelService.getCommerceChannelRels(
-					CPDefinition.class.getName(),
-					cpDefinition.getCPDefinitionId(), null,
-					pagination.getStartPosition(), pagination.getEndPosition()),
-				commerceChannelRel -> _toChannel(commerceChannelRel)),
-			pagination, commerceChannelRelsCount);
-	}
-
-	private Channel _toChannel(CommerceChannelRel commerceChannelRel)
-		throws Exception {
-
-		CommerceChannel commerceChannel =
-			commerceChannelRel.getCommerceChannel();
-
-		return new Channel() {
-			{
-				currencyCode = commerceChannel.getCommerceCurrencyCode();
-				externalReferenceCode =
-					commerceChannel.getExternalReferenceCode();
-				id = commerceChannel.getCommerceChannelId();
-				name = commerceChannel.getName();
-				type = commerceChannel.getType();
-			}
-		};
+		return _channelHelper.getProductIdChannelsPage(id, pagination);
 	}
 
 	@Reference
-	private CommerceChannelRelService _commerceChannelRelService;
-
-	@Reference
-	private CPDefinitionService _cpDefinitionService;
+	private ChannelHelper _channelHelper;
 
 }

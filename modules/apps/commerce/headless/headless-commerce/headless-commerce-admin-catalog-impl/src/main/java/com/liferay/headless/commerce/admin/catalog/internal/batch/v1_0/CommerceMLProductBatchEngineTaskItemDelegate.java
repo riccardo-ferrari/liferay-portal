@@ -20,11 +20,13 @@ import com.liferay.batch.engine.pagination.Page;
 import com.liferay.batch.engine.pagination.Pagination;
 import com.liferay.headless.commerce.admin.catalog.constants.v1_0.ProductBatchEngineTaskItemDelegateConstants;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Category;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Channel;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductSpecification;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Sku;
 import com.liferay.headless.commerce.admin.catalog.internal.dto.v1_0.converter.ProductDTOConverter;
 import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.CategoryHelper;
+import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.ChannelHelper;
 import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.ProductHelper;
 import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.ProductSpecificationHelper;
 import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.SkuHelper;
@@ -100,6 +102,16 @@ public class CommerceMLProductBatchEngineTaskItemDelegate
 			com.liferay.portal.vulcan.pagination.Pagination.of(
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
+		// Channels
+
+		com.liferay.portal.vulcan.pagination.Page<Channel> channelPage =
+			_channelHelper.getProductIdChannelsPage(
+				product.getProductId(), fullPagination);
+
+		Collection<Channel> channels = channelPage.getItems();
+
+		product.setChannels(channels.toArray(new Channel[0]));
+
 		// Product Specifications
 
 		com.liferay.portal.vulcan.pagination.Page<ProductSpecification>
@@ -141,6 +153,9 @@ public class CommerceMLProductBatchEngineTaskItemDelegate
 
 	@Reference
 	private CategoryHelper _categoryHelper;
+
+	@Reference
+	private ChannelHelper _channelHelper;
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
