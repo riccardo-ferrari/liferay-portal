@@ -107,9 +107,6 @@ public class OrderItemDTOConverter
 				requestedDeliveryDate =
 					commerceOrderItem.getRequestedDeliveryDate();
 				shippedQuantity = commerceOrderItem.getShippedQuantity();
-				shippingAddress = _getShippingAddress(
-					dtoConverterContext.getLocale(),
-					commerceOrderItem.getShippingAddressId());
 				shippingAddressId = commerceOrderItem.getShippingAddressId();
 				sku = commerceOrderItem.getSku();
 				skuExternalReferenceCode = _getSkuExternalReferenceCode(
