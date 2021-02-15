@@ -15,6 +15,7 @@
 package com.liferay.commerce.theme.minium.full.site.initializer.internal.osgi.commands;
 
 import com.liferay.commerce.theme.minium.SiteInitializerDependencyResolver;
+import com.liferay.commerce.theme.minium.full.site.initializer.internal.importer.CommerceMLForecastImporter;
 import com.liferay.commerce.theme.minium.full.site.initializer.internal.importer.CommerceMLRecommendationImporter;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -43,12 +44,40 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	enabled = false, immediate = true,
 	property = {
+		"osgi.command.function=importForecasts",
 		"osgi.command.function=importRecommendations",
 		"osgi.command.scope=commerce"
 	},
 	service = CommerceOSGiCommands.class
 )
 public class CommerceOSGiCommands {
+
+	public void importForecasts(long siteId) throws Exception {
+		Group group = _groupLocalService.getGroup(siteId);
+
+		Company company = _companyLocalService.getCompanyById(
+			group.getCompanyId());
+
+		Role role = _roleLocalService.fetchRole(
+			company.getCompanyId(), RoleConstants.ADMINISTRATOR);
+
+		List<User> roleUsers = _userLocalService.getRoleUsers(role.getRoleId());
+
+		User user = roleUsers.get(0);
+
+		PermissionChecker permissionChecker = _permissionCheckerFactory.create(
+			user);
+
+		PrincipalThreadLocal.setName(user.getUserId());
+
+		PermissionThreadLocal.setPermissionChecker(permissionChecker);
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray(
+			_fullSiteInitializerDependencyResolver.getJSON("forecasts.json"));
+
+		_commerceMLForecastImporter.importCommerceMLForecasts(
+			jsonArray, siteId, user.getUserId());
+	}
 
 	public void importRecommendations(
 			long siteId, String externalReferenceCodePrefix)
@@ -80,6 +109,9 @@ public class CommerceOSGiCommands {
 		_commerceMLRecommendationImporter.importCommerceMLRecommendations(
 			jsonArray, externalReferenceCodePrefix, siteId, user.getUserId());
 	}
+
+	@Reference
+	private CommerceMLForecastImporter _commerceMLForecastImporter;
 
 	@Reference
 	private CommerceMLRecommendationImporter _commerceMLRecommendationImporter;
