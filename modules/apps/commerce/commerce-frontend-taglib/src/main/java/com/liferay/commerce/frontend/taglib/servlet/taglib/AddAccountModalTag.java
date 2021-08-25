@@ -43,7 +43,7 @@ public class AddAccountModalTag extends ComponentRendererTag {
 
 		putValue(
 			"usersAPI",
-			PortalUtil.getPortalURL(httpServletRequest) +
+			PortalUtil.getPortalURL(httpServletRequest) + "/" + PortalUtil.getPathContext() +
 				"/o/commerce-ui/search-users");
 
 		setTemplateNamespace("AddAccountModal.render");

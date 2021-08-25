@@ -53,6 +53,9 @@ public class AddressModalTag extends ComponentRendererTag {
 				"countriesAPI",
 				StringBundler.concat(
 					PortalUtil.getPortalURL(httpServletRequest),
+					StringPool.SLASH,
+					PortalUtil.getPathContext(),
+					StringPool.SLASH,
 					"/o/commerce-ui/address/countries-by-channel-id?channelId=",
 					commerceContext.getCommerceChannelId(), "&p_auth=",
 					AuthTokenUtil.getToken(httpServletRequest)));
@@ -70,7 +73,7 @@ public class AddressModalTag extends ComponentRendererTag {
 
 		putValue(
 			"regionsAPI",
-			PortalUtil.getPortalURL(httpServletRequest) +
+			PortalUtil.getPortalURL(httpServletRequest) + "/" + PortalUtil.getPathContext() +
 				"/o/commerce-ui/address/regions/");
 		putValue("spritemap", themeDisplay.getPathThemeImages() + "/icons.svg");
 

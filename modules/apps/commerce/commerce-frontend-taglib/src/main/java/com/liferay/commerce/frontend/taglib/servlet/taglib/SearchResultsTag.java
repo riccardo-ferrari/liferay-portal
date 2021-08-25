@@ -61,7 +61,7 @@ public class SearchResultsTag extends ComponentRendererTag {
 
 		putValue(
 			"searchAPI",
-			PortalUtil.getPortalURL(httpServletRequest) +
+			PortalUtil.getPortalURL(httpServletRequest) + "/" + PortalUtil.getPathContext() +
 				"/o/commerce-ui/search/");
 
 		ThemeDisplay themeDisplay =
