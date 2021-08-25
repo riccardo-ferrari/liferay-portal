@@ -72,6 +72,7 @@ public class DataSetDisplayTag extends IncludeTag {
 		try {
 			_appURL =
 				PortalUtil.getPortalURL(httpServletRequest) +
+					"/" + PortalUtil.getPathContext() +
 					"/o/frontend-taglib-clay/app";
 
 			StringBundler sb = new StringBundler(
