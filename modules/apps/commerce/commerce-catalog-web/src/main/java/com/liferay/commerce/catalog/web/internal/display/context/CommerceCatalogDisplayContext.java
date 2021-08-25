@@ -53,6 +53,7 @@ import com.liferay.portal.kernel.settings.SystemSettingsLocator;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -321,7 +322,7 @@ public class CommerceCatalogDisplayContext {
 			true);
 
 		return StringBundler.concat(
-			_portal.getPortalURL(cpRequestHelper.getRequest()),
+			_portal.getPortalURL(cpRequestHelper.getRequest()), StringPool.SLASH,  _portal.getPathContext(), StringPool.SLASH,
 			"/o/headless-commerce-admin-pricing/v2.0/price-lists?filter=",
 			encodedFilter);
 	}
