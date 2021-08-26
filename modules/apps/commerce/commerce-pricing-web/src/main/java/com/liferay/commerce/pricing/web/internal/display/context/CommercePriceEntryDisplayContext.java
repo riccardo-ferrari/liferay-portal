@@ -185,7 +185,8 @@ public class CommercePriceEntryDisplayContext
 	}
 
 	public String getPriceEntryApiURL() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/price-lists/" +
+		return httpServletRequest.getContextPath() +
+			"/o/headless-commerce-admin-pricing/v2.0/price-lists/" +
 			getCommercePriceListId() +
 				"/price-entries?nestedFields=product,sku";
 	}

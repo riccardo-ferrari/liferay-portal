@@ -230,7 +230,8 @@ public class CommerceDiscountDisplayContext extends BasePricingDisplayContext {
 	}
 
 	public String getDiscountCategoriesApiURL() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/discounts/" +
+		return httpServletRequest.getContextPath()  +
+			"/o/headless-commerce-admin-pricing/v2.0/discounts/" +
 			getCommerceDiscountId() +
 				"/discount-categories?nestedFields=category";
 	}
@@ -282,7 +283,8 @@ public class CommerceDiscountDisplayContext extends BasePricingDisplayContext {
 	}
 
 	public String getDiscountCPDefinitionApiURL() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/discounts/" +
+		return httpServletRequest.getContextPath() +
+			"/o/headless-commerce-admin-pricing/v2.0/discounts/" +
 			getCommerceDiscountId() + "/discount-products?nestedFields=product";
 	}
 
@@ -308,7 +310,8 @@ public class CommerceDiscountDisplayContext extends BasePricingDisplayContext {
 	}
 
 	public String getDiscountCPInstanceAPIURL() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/discounts/" +
+		return httpServletRequest.getContextPath() +
+			"/o/headless-commerce-admin-pricing/v2.0/discounts/" +
 			getCommerceDiscountId() + "/discount-skus?nestedFields=sku";
 	}
 
@@ -375,7 +378,8 @@ public class CommerceDiscountDisplayContext extends BasePricingDisplayContext {
 	}
 
 	public String getDiscountPricingClassesApiURL() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/discounts/" +
+		return httpServletRequest.getContextPath()  +
+			"/o/headless-commerce-admin-pricing/v2.0/discounts/" +
 			getCommerceDiscountId() +
 				"/discount-product-groups?nestedFields=productGroup";
 	}
@@ -399,7 +403,8 @@ public class CommerceDiscountDisplayContext extends BasePricingDisplayContext {
 	}
 
 	public String getDiscountRulesApiURL() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/discounts/" +
+		return httpServletRequest.getContextPath()  +
+			"/o/headless-commerce-admin-pricing/v2.0/discounts/" +
 			getCommerceDiscountId() + "/discount-rules";
 	}
 

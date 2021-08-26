@@ -318,12 +318,14 @@ public class CommercePriceListDisplayContext
 
 		return StringBundler.concat(
 			PortalUtil.getPortalURL(httpServletRequest),
+			PortalUtil.getPathContext(),
 			"/o/headless-commerce-admin-pricing/v2.0/price-lists?filter=",
 			encodedFilter);
 	}
 
 	public String getPriceModifierCategoriesApiUrl() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +
+		return httpServletRequest.getContextPath() +
+			"/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +
 			getCommercePriceModifierId() +
 				"/price-modifier-categories?nestedFields=category";
 	}
@@ -339,7 +341,8 @@ public class CommercePriceListDisplayContext
 	}
 
 	public String getPriceModifierCPDefinitionApiUrl() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +
+		return httpServletRequest.getContextPath() +
+			"/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +
 			getCommercePriceModifierId() +
 				"/price-modifier-products?nestedFields=product";
 	}
@@ -367,7 +370,8 @@ public class CommercePriceListDisplayContext
 	public String getPriceModifierPricingClassesApiUrl()
 		throws PortalException {
 
-		return "/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +
+		return httpServletRequest.getContextPath() +
+			"/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +
 			getCommercePriceModifierId() +
 				"/price-modifier-product-groups?nestedFields=productGroup";
 	}

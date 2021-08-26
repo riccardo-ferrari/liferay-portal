@@ -146,7 +146,8 @@ public class CommerceDiscountQualifiersDisplayContext
 	}
 
 	public String getDiscountAccountsApiURL() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/discounts/" +
+		return httpServletRequest.getContextPath() +
+			"/o/headless-commerce-admin-pricing/v2.0/discounts/" +
 			getCommerceDiscountId() + "/discount-accounts?nestedFields=account";
 	}
 
@@ -170,7 +171,8 @@ public class CommerceDiscountQualifiersDisplayContext
 	}
 
 	public String getDiscountChannelsApiURL() throws PortalException {
-		return "/o/headless-commerce-admin-pricing/v2.0/discounts/" +
+		return httpServletRequest.getContextPath() +
+			"/o/headless-commerce-admin-pricing/v2.0/discounts/" +
 			getCommerceDiscountId() + "/discount-channels?nestedFields=channel";
 	}
 

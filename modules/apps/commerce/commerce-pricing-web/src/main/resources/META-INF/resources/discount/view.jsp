@@ -17,6 +17,8 @@
 <%@ include file="/init.jsp" %>
 
 <%
+String apiURL = themeDisplay.getPathContext() +  "/o/headless-commerce-admin-pricing/v2.0/discounts";
+
 CommerceDiscountDisplayContext commerceDiscountDisplayContext = (CommerceDiscountDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
 
 PortletURL portletURL = commerceDiscountDisplayContext.getPortletURL();
@@ -29,7 +31,7 @@ PortletURL portletURL = commerceDiscountDisplayContext.getPortletURL();
 		<aui:input name="deleteDiscounts" type="hidden" />
 
 		<clay:headless-data-set-display
-			apiURL="/o/headless-commerce-admin-pricing/v2.0/discounts"
+			apiURL="<%= apiURL %>"
 			clayDataSetActionDropdownItems="<%= commerceDiscountDisplayContext.getDiscountClayDataSetActionDropdownItems() %>"
 			creationMenu="<%= commerceDiscountDisplayContext.getDiscountCreationMenu() %>"
 			formId="fm"
