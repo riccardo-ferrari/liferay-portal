@@ -17,6 +17,8 @@
 <%@ include file="/init.jsp" %>
 
 <%
+String apiURL = themeDisplay.getPathContext() + "/o/headless-commerce-admin-catalog/v1.0/options";
+
 CPOptionDisplayContext cpOptionDisplayContext = (CPOptionDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
 
 PortletURL portletURL = renderResponse.createRenderURL();
@@ -25,7 +27,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 <div class="pt-4" id="<portlet:namespace />optionsContainer">
 	<aui:form action="<%= portletURL.toString() %>" cssClass="container-fluid container-fluid-max-xl" method="post" name="fm">
 		<clay:headless-data-set-display
-			apiURL="/o/headless-commerce-admin-catalog/v1.0/options"
+			apiURL="<%= apiURL %>"
 			clayDataSetActionDropdownItems="<%= cpOptionDisplayContext.getOptionClayDataSetActionDropdownItems() %>"
 			creationMenu="<%= cpOptionDisplayContext.getCreationMenu() %>"
 			id="<%= CommerceOptionDataSetConstants.COMMERCE_DATA_SET_KEY_OPTIONS %>"

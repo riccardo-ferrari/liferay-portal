@@ -122,7 +122,7 @@ else {
 				title='<%= LanguageUtil.get(request, "values") %>'
 			>
 				<clay:headless-data-set-display
-					apiURL='<%= "/o/headless-commerce-admin-catalog/v1.0/options/" + cpOptionId + "/optionValues" %>'
+					apiURL='<%= themeDisplay.getPathContext() + "/o/headless-commerce-admin-catalog/v1.0/options/" + cpOptionId + "/optionValues" %>'
 					clayDataSetActionDropdownItems="<%= cpOptionDisplayContext.getOptionValueClayDataSetActionDropdownItems() %>"
 					creationMenu="<%= cpOptionDisplayContext.getOptionValueCreationMenu(cpOptionId) %>"
 					id="<%= CommerceOptionDataSetConstants.COMMERCE_DATA_SET_KEY_OPTION_VALUES %>"
