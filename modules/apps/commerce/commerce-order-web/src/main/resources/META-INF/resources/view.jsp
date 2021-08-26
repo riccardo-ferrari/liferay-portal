@@ -17,11 +17,12 @@
 <%@ include file="/init.jsp" %>
 
 <%
+String apiURL = themeDisplay.getPathContext() + "/o/headless-commerce-admin-order/v1.0/orders?nestedFields=account,channel";
 CommerceOrderListDisplayContext commerceOrderListDisplayContext = (CommerceOrderListDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
 %>
 
 <clay:headless-data-set-display
-	apiURL="/o/headless-commerce-admin-order/v1.0/orders?nestedFields=account,channel"
+	apiURL="<%= apiURL %>"
 	clayDataSetActionDropdownItems="<%= commerceOrderListDisplayContext.getClayDataSetActionDropdownItems() %>"
 	formId="fm"
 	id="<%= CommerceOrderDataSetConstants.COMMERCE_DATA_SET_KEY_ALL_ORDERS %>"
