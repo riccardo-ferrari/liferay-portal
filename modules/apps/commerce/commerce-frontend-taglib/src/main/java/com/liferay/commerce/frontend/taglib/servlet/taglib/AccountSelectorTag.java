@@ -160,7 +160,8 @@ public class AccountSelectorTag extends IncludeTag {
 				_getEditOrderURL(themeDisplay));
 
 			String setCurrentAccountURL =
-				PortalUtil.getPortalURL(parentHttpServletRequest) + "/" + PortalUtil.getPathContext() +
+				PortalUtil.getPortalURL(parentHttpServletRequest) +
+					PortalUtil.getPathContext() +
 					"/o/commerce-ui/set-current-account";
 
 			httpServletRequest.setAttribute(
