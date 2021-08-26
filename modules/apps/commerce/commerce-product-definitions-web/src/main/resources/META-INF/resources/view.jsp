@@ -17,6 +17,8 @@
 <%@ include file="/init.jsp" %>
 
 <%
+String apiURL = themeDisplay.getPathContext() + "/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=skus,catalog";
+
 String catalogNavigationItem = ParamUtil.getString(request, "catalogNavigationItem", "view-all-product-definitions");
 
 CPDefinitionsDisplayContext cpDefinitionsDisplayContext = (CPDefinitionsDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
@@ -35,7 +37,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		<aui:input name="deleteCPDefinitionIds" type="hidden" />
 
 		<clay:headless-data-set-display
-			apiURL="/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=skus,catalog"
+			apiURL="<%= apiURL %>"
 			clayDataSetActionDropdownItems="<%= cpDefinitionsDisplayContext.getClayDataSetActionDropdownItems() %>"
 			creationMenu="<%= cpDefinitionsDisplayContext.getCreationMenu() %>"
 			formId="fm"
