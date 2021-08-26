@@ -21,7 +21,7 @@ const BASE_OPTIONS = {
 };
 
 function _fetch(url, options = {}, params = {}) {
-	const formattedUrl = new URL(url, Liferay.ThemeDisplay.getPortalURL());
+	const formattedUrl = new URL(Liferay.ThemeDisplay.getPathContext() + url, Liferay.ThemeDisplay.getPortalURL());
 
 	Object.entries(params).map(([key, value]) => {
 		formattedUrl.searchParams.append(key, value);
