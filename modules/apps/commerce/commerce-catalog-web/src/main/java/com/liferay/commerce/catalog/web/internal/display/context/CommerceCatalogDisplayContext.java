@@ -322,7 +322,8 @@ public class CommerceCatalogDisplayContext {
 			true);
 
 		return StringBundler.concat(
-			_portal.getPortalURL(cpRequestHelper.getRequest()), StringPool.SLASH,  _portal.getPathContext(), StringPool.SLASH,
+			_portal.getPortalURL(cpRequestHelper.getRequest()),
+			_portal.getPathContext(),
 			"/o/headless-commerce-admin-pricing/v2.0/price-lists?filter=",
 			encodedFilter);
 	}
