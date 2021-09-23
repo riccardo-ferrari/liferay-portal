@@ -85,6 +85,8 @@ public class OpenAPIResourceImpl {
 
 			add(AccountForecastResourceImpl.class);
 
+			add(SkuForecastResourceImpl.class);
+
 			add(OpenAPIResourceImpl.class);
 		}
 	};
