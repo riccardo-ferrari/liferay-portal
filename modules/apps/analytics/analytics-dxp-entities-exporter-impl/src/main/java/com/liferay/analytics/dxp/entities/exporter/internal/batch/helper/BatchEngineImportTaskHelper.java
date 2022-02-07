@@ -20,6 +20,7 @@ import com.liferay.batch.engine.BatchEngineTaskExecuteStatus;
 import com.liferay.batch.engine.BatchEngineTaskOperation;
 import com.liferay.batch.engine.model.BatchEngineImportTask;
 import com.liferay.batch.engine.service.BatchEngineImportTaskLocalService;
+import com.liferay.portal.kernel.exception.PortalException;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class BatchEngineImportTaskHelper {
 			String batchEngineImportTaskItemDelegateName, long batchSize,
 			long companyId, Map<String, String> fieldMapping, File resourceFile,
 			String resourceName, long userId)
-		throws IOException {
+		throws IOException, PortalException {
 
 		_batchEngineImportTaskExecutor = batchEngineImportTaskExecutor;
 
