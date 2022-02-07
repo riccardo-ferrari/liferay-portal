@@ -33,6 +33,7 @@ import com.liferay.commerce.product.type.CPType;
 import com.liferay.commerce.product.type.CPTypeServicesTracker;
 import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -66,7 +67,7 @@ public class ProductDTOConverter
 		throws Exception {
 
 		return _cpDefinitionLocalService.fetchCPDefinition(
-			Long.parseLong(externalReferenceCode));
+			GetterUtil.getLong(externalReferenceCode));
 	}
 
 	@Override

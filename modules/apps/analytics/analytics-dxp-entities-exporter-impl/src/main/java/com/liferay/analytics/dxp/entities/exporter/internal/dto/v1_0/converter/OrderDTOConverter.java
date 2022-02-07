@@ -29,6 +29,7 @@ import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.commerce.service.CommerceOrderTypeLocalService;
 import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
@@ -57,7 +58,7 @@ public class OrderDTOConverter implements DTOConverter<CommerceOrder, Order> {
 		throws Exception {
 
 		return _commerceOrderLocalService.getCommerceOrder(
-			Long.parseLong(externalReferenceCode));
+			GetterUtil.getLong(externalReferenceCode));
 	}
 
 	@Override
