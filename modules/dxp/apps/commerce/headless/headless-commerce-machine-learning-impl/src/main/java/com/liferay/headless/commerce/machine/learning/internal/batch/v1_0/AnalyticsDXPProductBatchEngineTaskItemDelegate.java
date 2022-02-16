@@ -56,9 +56,9 @@ public class AnalyticsDXPProductBatchEngineTaskItemDelegate
 	extends BaseBatchEngineTaskItemDelegate<Product> {
 
 	@Override
-	public EntityModel getEntityModel(
-		Map<String, List<String>> multivaluedMap)
+	public EntityModel getEntityModel(Map<String, List<String>> multivaluedMap)
 		throws Exception {
+
 		return new ProductEntityModel();
 	}
 

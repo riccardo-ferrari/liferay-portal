@@ -14,7 +14,7 @@
 
 package com.liferay.headless.commerce.machine.learning.internal.dispatch.executor;
 
-import com.liferay.analytics.exportimport.helper.AnalyticsExportImportHelper;
+import com.liferay.analytics.batch.exportimport.helper.AnalyticsBatchExportImportHelper;
 import com.liferay.dispatch.executor.BaseDispatchTaskExecutor;
 import com.liferay.dispatch.executor.DispatchTaskExecutor;
 import com.liferay.dispatch.executor.DispatchTaskExecutorOutput;
@@ -72,12 +72,11 @@ public class AnalyticsUploadProductDispatchTaskExecutor
 		Date resourceLastModifiedDate = null;
 
 		if (latestSuccessfulDispatchLog != null) {
-			resourceLastModifiedDate =
-				latestSuccessfulDispatchLog.getEndDate();
+			resourceLastModifiedDate = latestSuccessfulDispatchLog.getEndDate();
 		}
 
 		try {
-			_analyticsExportImportHelper.exportToAnalyticsCloud(
+			_analyticsBatchExportImportHelper.exportToAnalyticsCloud(
 				"analytics-dxp-product", dispatchTrigger.getCompanyId(), null,
 				message -> _updateDispatchLog(
 					dispatchLog.getDispatchLogId(), dispatchTaskExecutorOutput,
@@ -124,7 +123,7 @@ public class AnalyticsUploadProductDispatchTaskExecutor
 		"yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 	@Reference
-	private AnalyticsExportImportHelper _analyticsExportImportHelper;
+	private AnalyticsBatchExportImportHelper _analyticsBatchExportImportHelper;
 
 	@Reference
 	private DispatchLogLocalService _dispatchLogLocalService;

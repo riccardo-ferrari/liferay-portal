@@ -39,7 +39,7 @@ public class ProductEntityModel implements EntityModel {
 			new IntegerEntityField(
 				Field.getSortableFieldName(Field.MODIFIED_DATE),
 				locale -> Field.getSortableFieldName(Field.MODIFIED_DATE))
-			).collect(
+		).collect(
 			Collectors.toMap(EntityField::getName, Function.identity())
 		);
 	}
