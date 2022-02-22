@@ -14,11 +14,12 @@
 
 package com.liferay.analytics.batch.exportimport.internal.helper;
 
+import com.liferay.analytics.batch.exportimport.client.AnalyticsBatchClient;
+import com.liferay.analytics.batch.exportimport.client.UploadType;
 import com.liferay.analytics.batch.exportimport.helper.AnalyticsBatchExportImportHelper;
 import com.liferay.analytics.batch.exportimport.internal.batch.BatchEngineExportTaskHelper;
 import com.liferay.analytics.batch.exportimport.internal.batch.BatchEngineImportTaskHelper;
 import com.liferay.analytics.batch.exportimport.internal.batch.BatchEngineTaskHelperFactory;
-import com.liferay.analytics.message.sender.client.AnalyticsBatchClient;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -88,7 +89,7 @@ public class AnalyticsBatchExportImportHelperImpl
 				batchEngineExportTaskHelper.getContentInputStream();
 
 			_analyticsBatchClient.uploadResource(
-				companyId, contentInputStream, resourceName);
+				companyId, contentInputStream, resourceName, UploadType.FULL);
 
 			contentInputStream.close();
 
