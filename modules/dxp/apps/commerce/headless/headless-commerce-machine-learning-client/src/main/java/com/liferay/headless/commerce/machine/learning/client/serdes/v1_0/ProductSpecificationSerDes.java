@@ -96,7 +96,11 @@ public class ProductSpecificationSerDes {
 
 			sb.append("\"value\": ");
 
-			sb.append(_toJSON(productSpecification.getValue()));
+			sb.append("\"");
+
+			sb.append(_escape(productSpecification.getValue()));
+
+			sb.append("\"");
 		}
 
 		sb.append("}");
@@ -193,9 +197,7 @@ public class ProductSpecificationSerDes {
 			}
 			else if (Objects.equals(jsonParserFieldName, "value")) {
 				if (jsonParserFieldValue != null) {
-					productSpecification.setValue(
-						(Map)ProductSpecificationSerDes.toMap(
-							(String)jsonParserFieldValue));
+					productSpecification.setValue((String)jsonParserFieldValue);
 				}
 			}
 		}

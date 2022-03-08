@@ -97,17 +97,17 @@ public class Product implements Serializable {
 	protected Long catalogId;
 
 	@Schema
-	public Integer[] getCategoryIds() {
+	public Long[] getCategoryIds() {
 		return categoryIds;
 	}
 
-	public void setCategoryIds(Integer[] categoryIds) {
+	public void setCategoryIds(Long[] categoryIds) {
 		this.categoryIds = categoryIds;
 	}
 
 	@JsonIgnore
 	public void setCategoryIds(
-		UnsafeSupplier<Integer[], Exception> categoryIdsUnsafeSupplier) {
+		UnsafeSupplier<Long[], Exception> categoryIdsUnsafeSupplier) {
 
 		try {
 			categoryIds = categoryIdsUnsafeSupplier.get();
@@ -122,7 +122,7 @@ public class Product implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Integer[] categoryIds;
+	protected Long[] categoryIds;
 
 	@Schema
 	public Date getCreateDate() {
@@ -471,19 +471,17 @@ public class Product implements Serializable {
 	protected Map<String, String> name;
 
 	@Schema
-	@Valid
-	public ProductChannel[] getProductChannels() {
+	public Long[] getProductChannels() {
 		return productChannels;
 	}
 
-	public void setProductChannels(ProductChannel[] productChannels) {
+	public void setProductChannels(Long[] productChannels) {
 		this.productChannels = productChannels;
 	}
 
 	@JsonIgnore
 	public void setProductChannels(
-		UnsafeSupplier<ProductChannel[], Exception>
-			productChannelsUnsafeSupplier) {
+		UnsafeSupplier<Long[], Exception> productChannelsUnsafeSupplier) {
 
 		try {
 			productChannels = productChannelsUnsafeSupplier.get();
@@ -498,7 +496,7 @@ public class Product implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected ProductChannel[] productChannels;
+	protected Long[] productChannels;
 
 	@Schema
 	public Long getProductId() {
@@ -969,7 +967,7 @@ public class Product implements Serializable {
 			sb.append("[");
 
 			for (int i = 0; i < productChannels.length; i++) {
-				sb.append(String.valueOf(productChannels[i]));
+				sb.append(productChannels[i]);
 
 				if ((i + 1) < productChannels.length) {
 					sb.append(", ");

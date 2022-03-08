@@ -19,7 +19,6 @@ import com.liferay.headless.commerce.machine.learning.client.serdes.v1_0.Product
 
 import java.io.Serializable;
 
-import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -96,16 +95,16 @@ public class ProductSpecification implements Cloneable, Serializable {
 
 	protected String specificationKey;
 
-	public Map<String, String> getValue() {
+	public String getValue() {
 		return value;
 	}
 
-	public void setValue(Map<String, String> value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 
 	public void setValue(
-		UnsafeSupplier<Map<String, String>, Exception> valueUnsafeSupplier) {
+		UnsafeSupplier<String, Exception> valueUnsafeSupplier) {
 
 		try {
 			value = valueUnsafeSupplier.get();
@@ -115,7 +114,7 @@ public class ProductSpecification implements Cloneable, Serializable {
 		}
 	}
 
-	protected Map<String, String> value;
+	protected String value;
 
 	@Override
 	public ProductSpecification clone() throws CloneNotSupportedException {

@@ -57,16 +57,16 @@ public class Product implements Cloneable, Serializable {
 
 	protected Long catalogId;
 
-	public Integer[] getCategoryIds() {
+	public Long[] getCategoryIds() {
 		return categoryIds;
 	}
 
-	public void setCategoryIds(Integer[] categoryIds) {
+	public void setCategoryIds(Long[] categoryIds) {
 		this.categoryIds = categoryIds;
 	}
 
 	public void setCategoryIds(
-		UnsafeSupplier<Integer[], Exception> categoryIdsUnsafeSupplier) {
+		UnsafeSupplier<Long[], Exception> categoryIdsUnsafeSupplier) {
 
 		try {
 			categoryIds = categoryIdsUnsafeSupplier.get();
@@ -76,7 +76,7 @@ public class Product implements Cloneable, Serializable {
 		}
 	}
 
-	protected Integer[] categoryIds;
+	protected Long[] categoryIds;
 
 	public Date getCreateDate() {
 		return createDate;
@@ -332,17 +332,16 @@ public class Product implements Cloneable, Serializable {
 
 	protected Map<String, String> name;
 
-	public ProductChannel[] getProductChannels() {
+	public Long[] getProductChannels() {
 		return productChannels;
 	}
 
-	public void setProductChannels(ProductChannel[] productChannels) {
+	public void setProductChannels(Long[] productChannels) {
 		this.productChannels = productChannels;
 	}
 
 	public void setProductChannels(
-		UnsafeSupplier<ProductChannel[], Exception>
-			productChannelsUnsafeSupplier) {
+		UnsafeSupplier<Long[], Exception> productChannelsUnsafeSupplier) {
 
 		try {
 			productChannels = productChannelsUnsafeSupplier.get();
@@ -352,7 +351,7 @@ public class Product implements Cloneable, Serializable {
 		}
 	}
 
-	protected ProductChannel[] productChannels;
+	protected Long[] productChannels;
 
 	public Long getProductId() {
 		return productId;

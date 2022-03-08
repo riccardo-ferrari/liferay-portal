@@ -57,6 +57,32 @@ public class ProductOption implements Serializable {
 	}
 
 	@Schema
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	@JsonIgnore
+	public void setKey(UnsafeSupplier<String, Exception> keyUnsafeSupplier) {
+		try {
+			key = keyUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String key;
+
+	@Schema
 	public String getOptionKey() {
 		return optionKey;
 	}
@@ -85,20 +111,20 @@ public class ProductOption implements Serializable {
 	protected String optionKey;
 
 	@Schema
-	public String[] getOptionValues() {
-		return optionValues;
+	public String[] getValues() {
+		return values;
 	}
 
-	public void setOptionValues(String[] optionValues) {
-		this.optionValues = optionValues;
+	public void setValues(String[] values) {
+		this.values = values;
 	}
 
 	@JsonIgnore
-	public void setOptionValues(
-		UnsafeSupplier<String[], Exception> optionValuesUnsafeSupplier) {
+	public void setValues(
+		UnsafeSupplier<String[], Exception> valuesUnsafeSupplier) {
 
 		try {
-			optionValues = optionValuesUnsafeSupplier.get();
+			values = valuesUnsafeSupplier.get();
 		}
 		catch (RuntimeException re) {
 			throw re;
@@ -110,7 +136,7 @@ public class ProductOption implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String[] optionValues;
+	protected String[] values;
 
 	@Override
 	public boolean equals(Object object) {
@@ -139,6 +165,20 @@ public class ProductOption implements Serializable {
 
 		sb.append("{");
 
+		if (key != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"key\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(key));
+
+			sb.append("\"");
+		}
+
 		if (optionKey != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -153,23 +193,23 @@ public class ProductOption implements Serializable {
 			sb.append("\"");
 		}
 
-		if (optionValues != null) {
+		if (values != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"optionValues\": ");
+			sb.append("\"values\": ");
 
 			sb.append("[");
 
-			for (int i = 0; i < optionValues.length; i++) {
+			for (int i = 0; i < values.length; i++) {
 				sb.append("\"");
 
-				sb.append(_escape(optionValues[i]));
+				sb.append(_escape(values[i]));
 
 				sb.append("\"");
 
-				if ((i + 1) < optionValues.length) {
+				if ((i + 1) < values.length) {
 					sb.append(", ");
 				}
 			}

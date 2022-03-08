@@ -36,10 +36,8 @@ import java.util.Set;
 
 import javax.annotation.Generated;
 
-import javax.validation.Valid;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -149,18 +147,17 @@ public class ProductSpecification implements Serializable {
 	protected String specificationKey;
 
 	@Schema
-	@Valid
-	public Map<String, String> getValue() {
+	public String getValue() {
 		return value;
 	}
 
-	public void setValue(Map<String, String> value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 
 	@JsonIgnore
 	public void setValue(
-		UnsafeSupplier<Map<String, String>, Exception> valueUnsafeSupplier) {
+		UnsafeSupplier<String, Exception> valueUnsafeSupplier) {
 
 		try {
 			value = valueUnsafeSupplier.get();
@@ -175,8 +172,8 @@ public class ProductSpecification implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	@NotNull
-	protected Map<String, String> value;
+	@NotEmpty
+	protected String value;
 
 	@Override
 	public boolean equals(Object object) {
@@ -247,7 +244,11 @@ public class ProductSpecification implements Serializable {
 
 			sb.append("\"value\": ");
 
-			sb.append(_toJSON(value));
+			sb.append("\"");
+
+			sb.append(_escape(value));
+
+			sb.append("\"");
 		}
 
 		sb.append("}");

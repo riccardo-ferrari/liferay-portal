@@ -55,6 +55,20 @@ public class ProductOptionSerDes {
 
 		sb.append("{");
 
+		if (productOption.getKey() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"key\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(productOption.getKey()));
+
+			sb.append("\"");
+		}
+
 		if (productOption.getOptionKey() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -69,23 +83,23 @@ public class ProductOptionSerDes {
 			sb.append("\"");
 		}
 
-		if (productOption.getOptionValues() != null) {
+		if (productOption.getValues() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"optionValues\": ");
+			sb.append("\"values\": ");
 
 			sb.append("[");
 
-			for (int i = 0; i < productOption.getOptionValues().length; i++) {
+			for (int i = 0; i < productOption.getValues().length; i++) {
 				sb.append("\"");
 
-				sb.append(_escape(productOption.getOptionValues()[i]));
+				sb.append(_escape(productOption.getValues()[i]));
 
 				sb.append("\"");
 
-				if ((i + 1) < productOption.getOptionValues().length) {
+				if ((i + 1) < productOption.getValues().length) {
 					sb.append(", ");
 				}
 			}
@@ -112,6 +126,13 @@ public class ProductOptionSerDes {
 
 		Map<String, String> map = new TreeMap<>();
 
+		if (productOption.getKey() == null) {
+			map.put("key", null);
+		}
+		else {
+			map.put("key", String.valueOf(productOption.getKey()));
+		}
+
 		if (productOption.getOptionKey() == null) {
 			map.put("optionKey", null);
 		}
@@ -119,13 +140,11 @@ public class ProductOptionSerDes {
 			map.put("optionKey", String.valueOf(productOption.getOptionKey()));
 		}
 
-		if (productOption.getOptionValues() == null) {
-			map.put("optionValues", null);
+		if (productOption.getValues() == null) {
+			map.put("values", null);
 		}
 		else {
-			map.put(
-				"optionValues",
-				String.valueOf(productOption.getOptionValues()));
+			map.put("values", String.valueOf(productOption.getValues()));
 		}
 
 		return map;
@@ -149,14 +168,19 @@ public class ProductOptionSerDes {
 			ProductOption productOption, String jsonParserFieldName,
 			Object jsonParserFieldValue) {
 
-			if (Objects.equals(jsonParserFieldName, "optionKey")) {
+			if (Objects.equals(jsonParserFieldName, "key")) {
+				if (jsonParserFieldValue != null) {
+					productOption.setKey((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "optionKey")) {
 				if (jsonParserFieldValue != null) {
 					productOption.setOptionKey((String)jsonParserFieldValue);
 				}
 			}
-			else if (Objects.equals(jsonParserFieldName, "optionValues")) {
+			else if (Objects.equals(jsonParserFieldName, "values")) {
 				if (jsonParserFieldValue != null) {
-					productOption.setOptionValues(
+					productOption.setValues(
 						toStrings((Object[])jsonParserFieldValue));
 				}
 			}

@@ -15,7 +15,6 @@
 package com.liferay.headless.commerce.machine.learning.client.serdes.v1_0;
 
 import com.liferay.headless.commerce.machine.learning.client.dto.v1_0.Product;
-import com.liferay.headless.commerce.machine.learning.client.dto.v1_0.ProductChannel;
 import com.liferay.headless.commerce.machine.learning.client.dto.v1_0.ProductOption;
 import com.liferay.headless.commerce.machine.learning.client.dto.v1_0.ProductSpecification;
 import com.liferay.headless.commerce.machine.learning.client.dto.v1_0.Sku;
@@ -246,7 +245,7 @@ public class ProductSerDes {
 			sb.append("[");
 
 			for (int i = 0; i < product.getProductChannels().length; i++) {
-				sb.append(String.valueOf(product.getProductChannels()[i]));
+				sb.append(product.getProductChannels()[i]);
 
 				if ((i + 1) < product.getProductChannels().length) {
 					sb.append(", ");
@@ -634,7 +633,7 @@ public class ProductSerDes {
 			else if (Objects.equals(jsonParserFieldName, "categoryIds")) {
 				if (jsonParserFieldValue != null) {
 					product.setCategoryIds(
-						toIntegers((Object[])jsonParserFieldValue));
+						toLongs((Object[])jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "createDate")) {
@@ -712,13 +711,7 @@ public class ProductSerDes {
 			else if (Objects.equals(jsonParserFieldName, "productChannels")) {
 				if (jsonParserFieldValue != null) {
 					product.setProductChannels(
-						Stream.of(
-							toStrings((Object[])jsonParserFieldValue)
-						).map(
-							object -> ProductChannelSerDes.toDTO((String)object)
-						).toArray(
-							size -> new ProductChannel[size]
-						));
+						toLongs((Object[])jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "productId")) {

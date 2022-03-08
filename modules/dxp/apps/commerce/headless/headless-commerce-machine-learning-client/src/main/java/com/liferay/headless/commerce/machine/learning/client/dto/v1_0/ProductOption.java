@@ -34,6 +34,25 @@ public class ProductOption implements Cloneable, Serializable {
 		return ProductOptionSerDes.toDTO(json);
 	}
 
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public void setKey(UnsafeSupplier<String, Exception> keyUnsafeSupplier) {
+		try {
+			key = keyUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String key;
+
 	public String getOptionKey() {
 		return optionKey;
 	}
@@ -55,26 +74,26 @@ public class ProductOption implements Cloneable, Serializable {
 
 	protected String optionKey;
 
-	public String[] getOptionValues() {
-		return optionValues;
+	public String[] getValues() {
+		return values;
 	}
 
-	public void setOptionValues(String[] optionValues) {
-		this.optionValues = optionValues;
+	public void setValues(String[] values) {
+		this.values = values;
 	}
 
-	public void setOptionValues(
-		UnsafeSupplier<String[], Exception> optionValuesUnsafeSupplier) {
+	public void setValues(
+		UnsafeSupplier<String[], Exception> valuesUnsafeSupplier) {
 
 		try {
-			optionValues = optionValuesUnsafeSupplier.get();
+			values = valuesUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected String[] optionValues;
+	protected String[] values;
 
 	@Override
 	public ProductOption clone() throws CloneNotSupportedException {
