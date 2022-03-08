@@ -369,6 +369,7 @@ components:
                     type: integer
                 categoryIds:
                     items:
+                        format: int64
                         type: integer
                     type: array
                 createDate:
@@ -442,7 +443,8 @@ components:
                     type: object
                 productChannels:
                     items:
-                        $ref: "#/components/schemas/ProductChannel"
+                        format: int64
+                        type: integer
                     type: array
                 productId:
                     format: int64
@@ -565,10 +567,12 @@ components:
             type: object
         ProductOption:
             properties:
+                key:
+                    type: string
                 optionKey:
                     example: option-key
                     type: string
-                optionValues:
+                values:
                     items:
                         type: string
                     type: array
@@ -589,13 +593,7 @@ components:
                     example: specification-key
                     type: string
                 value:
-                    additionalProperties:
-                        type: string
-                    example:
-                        en_US: Croatia
-                        hr_HR: Hrvatska
-                        hu_HU: Horvatorszag
-                    type: object
+                    type: string
             required:
                 - specificationKey
                 - value
