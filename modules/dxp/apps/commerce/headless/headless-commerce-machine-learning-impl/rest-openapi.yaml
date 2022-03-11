@@ -238,9 +238,6 @@ components:
                     format: int64
                     minimum: 0
                     type: integer
-                itemsQuantity:
-                    format: int64
-                    type: integer
                 modifiedDate:
                     example: 2017-08-21
                     format: date
