@@ -269,34 +269,6 @@ public class Order implements Serializable {
 	protected Long id;
 
 	@Schema
-	public Long getItemsQuantity() {
-		return itemsQuantity;
-	}
-
-	public void setItemsQuantity(Long itemsQuantity) {
-		this.itemsQuantity = itemsQuantity;
-	}
-
-	@JsonIgnore
-	public void setItemsQuantity(
-		UnsafeSupplier<Long, Exception> itemsQuantityUnsafeSupplier) {
-
-		try {
-			itemsQuantity = itemsQuantityUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Long itemsQuantity;
-
-	@Schema
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
@@ -724,16 +696,6 @@ public class Order implements Serializable {
 			sb.append("\"id\": ");
 
 			sb.append(id);
-		}
-
-		if (itemsQuantity != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"itemsQuantity\": ");
-
-			sb.append(itemsQuantity);
 		}
 
 		if (modifiedDate != null) {

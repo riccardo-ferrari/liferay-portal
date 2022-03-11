@@ -145,16 +145,6 @@ public class OrderSerDes {
 			sb.append(order.getId());
 		}
 
-		if (order.getItemsQuantity() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"itemsQuantity\": ");
-
-			sb.append(order.getItemsQuantity());
-		}
-
 		if (order.getModifiedDate() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -365,13 +355,6 @@ public class OrderSerDes {
 			map.put("id", String.valueOf(order.getId()));
 		}
 
-		if (order.getItemsQuantity() == null) {
-			map.put("itemsQuantity", null);
-		}
-		else {
-			map.put("itemsQuantity", String.valueOf(order.getItemsQuantity()));
-		}
-
 		if (order.getModifiedDate() == null) {
 			map.put("modifiedDate", null);
 		}
@@ -514,12 +497,6 @@ public class OrderSerDes {
 			else if (Objects.equals(jsonParserFieldName, "id")) {
 				if (jsonParserFieldValue != null) {
 					order.setId(Long.valueOf((String)jsonParserFieldValue));
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "itemsQuantity")) {
-				if (jsonParserFieldValue != null) {
-					order.setItemsQuantity(
-						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "modifiedDate")) {

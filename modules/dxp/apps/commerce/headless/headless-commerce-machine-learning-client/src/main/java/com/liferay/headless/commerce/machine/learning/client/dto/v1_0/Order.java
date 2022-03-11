@@ -183,27 +183,6 @@ public class Order implements Cloneable, Serializable {
 
 	protected Long id;
 
-	public Long getItemsQuantity() {
-		return itemsQuantity;
-	}
-
-	public void setItemsQuantity(Long itemsQuantity) {
-		this.itemsQuantity = itemsQuantity;
-	}
-
-	public void setItemsQuantity(
-		UnsafeSupplier<Long, Exception> itemsQuantityUnsafeSupplier) {
-
-		try {
-			itemsQuantity = itemsQuantityUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected Long itemsQuantity;
-
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
