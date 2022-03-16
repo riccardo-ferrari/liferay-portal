@@ -14,9 +14,11 @@
 
 package com.liferay.headless.commerce.admin.catalog.internal.resource.v1_0;
 
+import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetTagService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.commerce.account.model.CommerceAccountGroup;
 import com.liferay.commerce.account.service.CommerceAccountGroupRelService;
 import com.liferay.commerce.account.service.CommerceAccountGroupService;
@@ -26,6 +28,9 @@ import com.liferay.commerce.product.exception.NoSuchCatalogException;
 import com.liferay.commerce.product.model.CPAttachmentFileEntry;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
+import com.liferay.commerce.product.model.CPOption;
+import com.liferay.commerce.product.model.CPOptionValue;
+import com.liferay.commerce.product.model.CPSpecificationOption;
 import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CPAttachmentFileEntryService;
@@ -36,6 +41,7 @@ import com.liferay.commerce.product.service.CPDefinitionService;
 import com.liferay.commerce.product.service.CPDefinitionSpecificationOptionValueService;
 import com.liferay.commerce.product.service.CPInstanceService;
 import com.liferay.commerce.product.service.CPOptionService;
+import com.liferay.commerce.product.service.CPOptionValueService;
 import com.liferay.commerce.product.service.CPSpecificationOptionService;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.service.CommerceChannelRelService;
@@ -69,6 +75,7 @@ import com.liferay.headless.commerce.admin.catalog.internal.dto.v1_0.util.Custom
 import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.ProductHelper;
 import com.liferay.headless.commerce.admin.catalog.internal.odata.entity.v1_0.ProductEntityModel;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.AttachmentUtil;
+import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.CategoryUtil;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.DiagramUtil;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.MappedProductUtil;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.PinUtil;
@@ -100,6 +107,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -116,9 +124,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -407,16 +418,32 @@ public class ProductResourceImpl
 		Category[] categories = product.getCategories();
 
 		if (categories != null) {
-			List<Long> assetCategoryIds = new ArrayList<>();
+			Stream<Category> categoryStream = Arrays.stream(categories);
 
-			for (Category category : categories) {
-				if (category.getId() != null) {
-					assetCategoryIds.add(category.getId());
+			long[] assetCategoryIds = categoryStream.map(
+				c -> {
+					AssetCategory assetCategory = null;
+
+					try {
+						c.setVocabulary("Movielens");
+
+						assetCategory = CategoryUtil.upsertCategory(
+							_assetCategoryLocalService,
+							_assetVocabularyLocalService, c,
+							_serviceContextHelper.getServiceContext(
+								contextCompany.getGroupId()));
+					}
+					catch (PortalException portalException) {
+						throw new RuntimeException(portalException);
+					}
+
+					return assetCategory.getCategoryId();
 				}
-			}
+			).mapToLong(
+				Long::longValue
+			).toArray();
 
-			serviceContext.setAssetCategoryIds(
-				ArrayUtil.toLongArray(assetCategoryIds));
+			serviceContext.setAssetCategoryIds(assetCategoryIds);
 		}
 		else if (cpDefinition != null) {
 			long[] assetCategoryIds = _assetCategoryLocalService.getCategoryIds(
@@ -680,6 +707,29 @@ public class ProductResourceImpl
 			for (ProductSpecification productSpecification :
 					productSpecifications) {
 
+				CPSpecificationOption cpSpecificationOption =
+					_cpSpecificationOptionService.fetchCPSpecificationOption(
+						serviceContext.getCompanyId(),
+						productSpecification.getSpecificationKey());
+
+				if (cpSpecificationOption == null) {
+					Locale locale = LocaleUtil.getSiteDefault();
+
+					Map<Locale, String> titleMap = Collections.singletonMap(
+						locale, productSpecification.getSpecificationKey());
+
+					cpSpecificationOption =
+						_cpSpecificationOptionService.addCPSpecificationOption(
+							GetterUtil.getLong(
+								productSpecification.getOptionCategoryId()),
+							titleMap, null, false,
+							productSpecification.getSpecificationKey(),
+							serviceContext);
+
+					productSpecification.setSpecificationId(
+						cpSpecificationOption.getCPSpecificationOptionId());
+				}
+
 				ProductSpecificationUtil.
 					addCPDefinitionSpecificationOptionValue(
 						_cpDefinitionSpecificationOptionValueService,
@@ -708,6 +758,55 @@ public class ProductResourceImpl
 					for (ProductOptionValue productOptionValue :
 							productOptionValues) {
 
+						// Add Option Value
+
+						CPOption cpOption = cpDefinitionOptionRel.getCPOption();
+
+						// TODO: upsert do not work w/out external ref code
+
+						List<CPOptionValue> cpOptionValues =
+							_cpOptionValueService.getCPOptionValues(
+								cpOption.getCPOptionId(), -1, -1);
+
+						boolean optionValueExist = false;
+
+						for (CPOptionValue cpOptionValue : cpOptionValues) {
+							String cpOptionValueKey = cpOptionValue.getKey();
+
+							if (cpOptionValueKey.equals(
+								productOptionValue.getKey())) {
+
+								optionValueExist = true;
+
+								break;
+							}
+						}
+
+						if (!optionValueExist) {
+							Map<String, String> productOptionValueName =
+								productOptionValue.getName();
+
+							Set<Map.Entry<String, String>>
+								productOptionvalueNameEntrySet =
+								productOptionValueName.entrySet();
+
+							Stream<Map.Entry<String, String>>
+								productOptionValueNameStream =
+								productOptionvalueNameEntrySet.stream();
+
+							Map<Locale, String> localeNameMap =
+								productOptionValueNameStream.collect(
+									Collectors.toMap(
+										l -> LocaleUtil.fromLanguageId(
+											l.getKey()),
+										Map.Entry::getValue));
+
+							_cpOptionValueService.addCPOptionValue(
+								cpOption.getCPOptionId(), localeNameMap,
+								GetterUtil.getDouble(
+									productOptionValue.getPriority()),
+								productOptionValue.getKey(), serviceContext);
+						}
 						ProductOptionValueUtil.
 							addOrUpdateCPDefinitionOptionValueRel(
 								_cpDefinitionOptionValueRelService,
@@ -1014,16 +1113,32 @@ public class ProductResourceImpl
 			serviceContext.setAssetCategoryIds(assetCategoryIds);
 		}
 		else {
-			List<Long> assetCategoryIds = new ArrayList<>();
+			Stream<Category> categoryStream = Arrays.stream(categories);
 
-			for (Category category : categories) {
-				if (category.getId() != null) {
-					assetCategoryIds.add(category.getId());
+			long[] assetCategoryIds = categoryStream.map(
+				c -> {
+					AssetCategory assetCategory = null;
+
+					try {
+						c.setVocabulary("Movielens");
+
+						assetCategory = CategoryUtil.upsertCategory(
+							_assetCategoryLocalService,
+							_assetVocabularyLocalService, c,
+							_serviceContextHelper.getServiceContext(
+								contextCompany.getGroupId()));
+					}
+					catch (PortalException portalException) {
+						throw new RuntimeException(portalException);
+					}
+
+					return assetCategory.getCategoryId();
 				}
-			}
+			).mapToLong(
+				Long::longValue
+			).toArray();
 
-			serviceContext.setAssetCategoryIds(
-				ArrayUtil.toLongArray(assetCategoryIds));
+			serviceContext.setAssetCategoryIds(assetCategoryIds);
 		}
 
 		Map<String, String> nameMap = product.getName();
@@ -1091,6 +1206,9 @@ public class ProductResourceImpl
 	private AssetCategoryLocalService _assetCategoryLocalService;
 
 	@Reference
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
+
+	@Reference
 	private AssetTagService _assetTagService;
 
 	@Reference
@@ -1139,6 +1257,9 @@ public class ProductResourceImpl
 	@Reference
 	private CPDefinitionSpecificationOptionValueService
 		_cpDefinitionSpecificationOptionValueService;
+
+	@Reference
+	private CPOptionValueService _cpOptionValueService;
 
 	@Reference
 	private CPInstanceService _cpInstanceService;
