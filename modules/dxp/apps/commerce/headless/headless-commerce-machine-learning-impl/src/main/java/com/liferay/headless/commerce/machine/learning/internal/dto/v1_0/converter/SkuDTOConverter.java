@@ -57,15 +57,15 @@ public class SkuDTOConverter implements DTOConverter<CPInstance, Sku> {
 		return new Sku() {
 			{
 				cost = cpInstance.getCost();
-				discontinued = cpInstance.getDiscontinued();
+				discontinued = cpInstance.isDiscontinued();
 				displayDate = cpInstance.getDisplayDate();
 				expirationDate = cpInstance.getExpirationDate();
 				externalReferenceCode = cpInstance.getExternalReferenceCode();
 				gtin = cpInstance.getGtin();
 				id = cpInstance.getCPInstanceId();
 				manufacturerPartNumber = cpInstance.getManufacturerPartNumber();
-				published = cpInstance.getPublished();
-				purchasable = cpInstance.getPurchasable();
+				published = cpInstance.isPublished();
+				purchasable = cpInstance.isPurchasable();
 				sku = cpInstance.getSku();
 			}
 		};

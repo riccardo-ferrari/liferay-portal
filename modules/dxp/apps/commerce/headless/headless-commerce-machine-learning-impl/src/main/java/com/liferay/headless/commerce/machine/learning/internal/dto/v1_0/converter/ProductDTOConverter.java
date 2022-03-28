@@ -138,7 +138,7 @@ public class ProductDTOConverter
 					cpInstance -> _skuDTOConverter.toDTO(cpInstance),
 					Sku.class);
 				status = cpDefinition.getStatus();
-				subscriptionEnabled = cpDefinition.getSubscriptionEnabled();
+				subscriptionEnabled = cpDefinition.isSubscriptionEnabled();
 				tags = TransformUtil.transformToArray(
 					_assetTagLocalService.getTags(
 						CPDefinition.class.getName(),

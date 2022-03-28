@@ -82,7 +82,7 @@ public class OrderItemDTOConverter
 					commerceOrderItem.getParentCommerceOrderItemId();
 				quantity = commerceOrderItem.getQuantity();
 				sku = commerceOrderItem.getSku();
-				subscription = commerceOrderItem.getSubscription();
+				subscription = commerceOrderItem.isSubscription();
 				unitPrice = commerceOrderItem.getUnitPrice();
 				userId = commerceOrderItem.getUserId();
 
