@@ -1,0 +1,4 @@
+apiDir: "../test-api/src/main/java"
+apiPackagePath: "com.liferay.test"
+author: "Riccardo Ferrari"
+liferayEnterpriseApp: true
