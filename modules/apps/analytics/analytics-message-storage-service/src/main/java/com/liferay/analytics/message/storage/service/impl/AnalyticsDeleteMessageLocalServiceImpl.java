@@ -33,6 +33,21 @@ import org.osgi.service.component.annotations.Component;
 public class AnalyticsDeleteMessageLocalServiceImpl
 	extends AnalyticsDeleteMessageLocalServiceBaseImpl {
 
+	public AnalyticsDeleteMessage addAnalyticsDeleteMessage(
+		long companyId, String className, long classPK, long userId) {
+
+		AnalyticsDeleteMessage analyticsDeleteMessage =
+			analyticsDeleteMessagePersistence.create(
+				counterLocalService.increment());
+
+		analyticsDeleteMessage.setCompanyId(companyId);
+		analyticsDeleteMessage.setUserId(userId);
+		analyticsDeleteMessage.setClassName(className);
+		analyticsDeleteMessage.setClassPK(classPK);
+
+		return analyticsDeleteMessagePersistence.update(analyticsDeleteMessage);
+	}
+
 	@Override
 	public List<AnalyticsDeleteMessage> getAnalyticsDeleteMessages(
 		long companyId, Date modifiedDate, int start, int end) {
