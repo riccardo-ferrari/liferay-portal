@@ -77,6 +77,9 @@ public interface AnalyticsDeleteMessageLocalService
 	public AnalyticsDeleteMessage addAnalyticsDeleteMessage(
 		AnalyticsDeleteMessage analyticsDeleteMessage);
 
+	public AnalyticsDeleteMessage addAnalyticsDeleteMessage(
+		long companyId, String className, long classPK, long userId);
+
 	/**
 	 * Creates a new analytics delete message with the primary key. Does not add the analytics delete message to the database.
 	 *

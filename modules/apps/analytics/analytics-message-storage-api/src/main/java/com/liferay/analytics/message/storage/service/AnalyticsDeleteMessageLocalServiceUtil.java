@@ -61,6 +61,13 @@ public class AnalyticsDeleteMessageLocalServiceUtil {
 		return getService().addAnalyticsDeleteMessage(analyticsDeleteMessage);
 	}
 
+	public static AnalyticsDeleteMessage addAnalyticsDeleteMessage(
+		long companyId, String className, long classPK, long userId) {
+
+		return getService().addAnalyticsDeleteMessage(
+			companyId, className, classPK, userId);
+	}
+
 	/**
 	 * Creates a new analytics delete message with the primary key. Does not add the analytics delete message to the database.
 	 *
