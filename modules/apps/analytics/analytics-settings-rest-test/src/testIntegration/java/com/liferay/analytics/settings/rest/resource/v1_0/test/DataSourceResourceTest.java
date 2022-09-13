@@ -28,8 +28,42 @@ import org.mockito.Mockito;
 /**
  * @author Riccardo Ferrari
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class DataSourceResourceTest extends BaseDataSourceResourceTestCase {
 
+	@Override
+	public void testPostDataSource() throws Exception {
+		DataSourceToken dataSourceToken = new DataSourceToken();
+
+		dataSourceToken.setToken(RandomTestUtil.randomString());
+
+		Mockito.when(
+			_analyticsCloudClientHelper.connectDataSource(
+				Mockito.anyLong(), Mockito.anyString())
+		).thenReturn(
+			JSONUtil.put(
+				"liferayAnalyticsEndpointURL", "osbasahpublisher.lfr.cloud"
+			).put(
+				"liferayAnalyticsURL", "analytics.lfr.cloud"
+			).put(
+				"liferayAnalyticsProjectId", "asah123456789"
+			).put(
+				"liferayAnalyticsFaroBackendSecuritySignature",
+				"<secret-signature>"
+			).put(
+				"liferayAnalyticsDataSourceId", "574745902859054171"
+			).put(
+				"publicKey", "<some-public-key>"
+			).put(
+				"liferayAnalyticsFaroBackendURL", "osbasahbackend.lfr.cloud"
+			)
+		);
+
+		HttpInvoker.HttpResponse httpResponse =
+			dataSourceResource.postDataSourceHttpResponse(dataSourceToken);
+
+		assertHttpResponseStatusCode(204, httpResponse);
+	}
+
+	private AnalyticsCloudClientHelper _analyticsCloudClientHelper = Mockito.mock(AnalyticsCloudClientHelper.class);
 }
