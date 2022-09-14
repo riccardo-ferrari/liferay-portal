@@ -14,9 +14,11 @@
 
 package com.liferay.analytics.settings.web.internal.util;
 
+import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
+import com.liferay.analytics.settings.configuration.AnalyticsConfigurationTracker;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.ByteArrayOutputStream;
@@ -37,6 +39,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @author André Miranda
@@ -127,27 +132,54 @@ public class AnalyticsSettingsUtil {
 	}
 
 	public static String getConnectionType(long companyId) {
-		return PrefsPropsUtil.getString(
-			companyId, "liferayAnalyticsConnectionType");
+		AnalyticsConfigurationTracker analyticsConfigurationTracker =
+			_analyticsConfigurationTrackerServiceTracker.getService();
+
+		AnalyticsConfiguration analyticsConfiguration =
+			analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
+
+		return analyticsConfiguration.liferayAnalyticsConnectionType();
 	}
 
 	public static String getDataSourceId(long companyId) {
-		return PrefsPropsUtil.getString(
-			companyId, "liferayAnalyticsDataSourceId");
+		AnalyticsConfigurationTracker analyticsConfigurationTracker =
+			_analyticsConfigurationTrackerServiceTracker.getService();
+
+		AnalyticsConfiguration analyticsConfiguration =
+			analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
+
+		return analyticsConfiguration.liferayAnalyticsDataSourceId();
 	}
 
 	public static String getFaroBackendSecuritySignature(long companyId) {
-		return PrefsPropsUtil.getString(
-			companyId, "liferayAnalyticsFaroBackendSecuritySignature");
+		AnalyticsConfigurationTracker analyticsConfigurationTracker =
+			_analyticsConfigurationTrackerServiceTracker.getService();
+
+		AnalyticsConfiguration analyticsConfiguration =
+			analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
+
+		return analyticsConfiguration.
+			liferayAnalyticsFaroBackendSecuritySignature();
 	}
 
 	public static String getFaroBackendURL(long companyId) {
-		return PrefsPropsUtil.getString(
-			companyId, "liferayAnalyticsFaroBackendURL");
+		AnalyticsConfigurationTracker analyticsConfigurationTracker =
+			_analyticsConfigurationTrackerServiceTracker.getService();
+
+		AnalyticsConfiguration analyticsConfiguration =
+			analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
+
+		return analyticsConfiguration.liferayAnalyticsFaroBackendURL();
 	}
 
 	public static String getProjectId(long companyId) {
-		return PrefsPropsUtil.getString(companyId, "liferayAnalyticsProjectId");
+		AnalyticsConfigurationTracker analyticsConfigurationTracker =
+			_analyticsConfigurationTrackerServiceTracker.getService();
+
+		AnalyticsConfiguration analyticsConfiguration =
+			analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
+
+		return analyticsConfiguration.liferayAnalyticsProjectId();
 	}
 
 	public static boolean isAnalyticsEnabled(long companyId) {
@@ -224,5 +256,11 @@ public class AnalyticsSettingsUtil {
 			return httpResponse;
 		}
 	}
+
+	private static final ServiceTracker<?, AnalyticsConfigurationTracker>
+		_analyticsConfigurationTrackerServiceTracker =
+			ServiceTrackerFactory.open(
+				FrameworkUtil.getBundle(AnalyticsConfigurationTracker.class),
+				AnalyticsConfigurationTracker.class);
 
 }
