@@ -1,5 +1,32 @@
 components:
     schemas:
+        Channel:
+            properties:
+                channelId:
+                    type: string
+                createDate:
+                    format: date
+                    type: string
+                dataSources:
+                    items:
+                        $ref: "#/components/schemas/DataSource"
+                    type: array
+                name:
+                    type: string
+        DataSource:
+            properties:
+                commerceChannelIds:
+                    items:
+                        format: int64
+                        type: integer
+                    type: array
+                dataSourceId:
+                    type: string
+                siteIds:
+                    items:
+                        format: int64
+                        type: integer
+                    type: array
         DataSourceToken:
             properties:
                 token:
@@ -29,8 +56,43 @@ info:
     version: v1.0
 openapi: 3.0.1
 paths:
+    "/channel":
+        get:
+            operationId: getChannelPage
+            parameters:
+                - in: query
+                  name: keywords
+                  schema:
+                      type: string
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Channel"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Channel"
+                                type: array
+            tags: ["Channel"]
     "/data-source":
         delete:
+            operationId: deleteDataSource
             responses:
                 204:
                     content:
@@ -50,6 +112,7 @@ paths:
                         Unexpected error
             tags: ["DataSource"]
         post:
+            operationId: postDataSource
             requestBody:
                 content:
                     application/json:
