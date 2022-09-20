@@ -14,9 +14,12 @@
 
 package com.liferay.analytics.settings.rest.client.resource.v1_0;
 
-import com.liferay.analytics.settings.rest.client.dto.v1_0.DataSourceToken;
+import com.liferay.analytics.settings.rest.client.dto.v1_0.Channel;
 import com.liferay.analytics.settings.rest.client.http.HttpInvoker;
+import com.liferay.analytics.settings.rest.client.pagination.Page;
+import com.liferay.analytics.settings.rest.client.pagination.Pagination;
 import com.liferay.analytics.settings.rest.client.problem.Problem;
+import com.liferay.analytics.settings.rest.client.serdes.v1_0.ChannelSerDes;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -31,22 +34,18 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public interface DataSourceResource {
+public interface ChannelResource {
 
 	public static Builder builder() {
 		return new Builder();
 	}
 
-	public void deleteDataSource() throws Exception;
-
-	public HttpInvoker.HttpResponse deleteDataSourceHttpResponse()
+	public Page<Channel> getChannelPage(
+			String keywords, String filterString, Pagination pagination)
 		throws Exception;
 
-	public void postDataSource(DataSourceToken dataSourceToken)
-		throws Exception;
-
-	public HttpInvoker.HttpResponse postDataSourceHttpResponse(
-			DataSourceToken dataSourceToken)
+	public HttpInvoker.HttpResponse getChannelPageHttpResponse(
+			String keywords, String filterString, Pagination pagination)
 		throws Exception;
 
 	public static class Builder {
@@ -58,8 +57,8 @@ public interface DataSourceResource {
 			return this;
 		}
 
-		public DataSourceResource build() {
-			return new DataSourceResourceImpl(this);
+		public ChannelResource build() {
+			return new ChannelResourceImpl(this);
 		}
 
 		public Builder contextPath(String contextPath) {
@@ -125,11 +124,14 @@ public interface DataSourceResource {
 
 	}
 
-	public static class DataSourceResourceImpl implements DataSourceResource {
+	public static class ChannelResourceImpl implements ChannelResource {
 
-		public void deleteDataSource() throws Exception {
-			HttpInvoker.HttpResponse httpResponse =
-				deleteDataSourceHttpResponse();
+		public Page<Channel> getChannelPage(
+				String keywords, String filterString, Pagination pagination)
+			throws Exception {
+
+			HttpInvoker.HttpResponse httpResponse = getChannelPageHttpResponse(
+				keywords, filterString, pagination);
 
 			String content = httpResponse.getContent();
 
@@ -157,7 +159,7 @@ public interface DataSourceResource {
 			}
 
 			try {
-				return;
+				return Page.of(content, ChannelSerDes::toDTO);
 			}
 			catch (Exception e) {
 				_logger.log(
@@ -168,7 +170,8 @@ public interface DataSourceResource {
 			}
 		}
 
-		public HttpInvoker.HttpResponse deleteDataSourceHttpResponse()
+		public HttpInvoker.HttpResponse getChannelPageHttpResponse(
+				String keywords, String filterString, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -190,12 +193,27 @@ public interface DataSourceResource {
 				httpInvoker.parameter(entry.getKey(), entry.getValue());
 			}
 
-			httpInvoker.httpMethod(HttpInvoker.HttpMethod.DELETE);
+			httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
+
+			if (keywords != null) {
+				httpInvoker.parameter("keywords", String.valueOf(keywords));
+			}
+
+			if (filterString != null) {
+				httpInvoker.parameter("filter", filterString);
+			}
+
+			if (pagination != null) {
+				httpInvoker.parameter(
+					"page", String.valueOf(pagination.getPage()));
+				httpInvoker.parameter(
+					"pageSize", String.valueOf(pagination.getPageSize()));
+			}
 
 			httpInvoker.path(
 				_builder._scheme + "://" + _builder._host + ":" +
 					_builder._port + _builder._contextPath +
-						"/o/analytics-settings-rest/v1.0/data-source");
+						"/o/analytics-settings-rest/v1.0/channel");
 
 			httpInvoker.userNameAndPassword(
 				_builder._login + ":" + _builder._password);
@@ -203,93 +221,12 @@ public interface DataSourceResource {
 			return httpInvoker.invoke();
 		}
 
-		public void postDataSource(DataSourceToken dataSourceToken)
-			throws Exception {
-
-			HttpInvoker.HttpResponse httpResponse = postDataSourceHttpResponse(
-				dataSourceToken);
-
-			String content = httpResponse.getContent();
-
-			if ((httpResponse.getStatusCode() / 100) != 2) {
-				_logger.log(
-					Level.WARNING,
-					"Unable to process HTTP response content: " + content);
-				_logger.log(
-					Level.WARNING,
-					"HTTP response message: " + httpResponse.getMessage());
-				_logger.log(
-					Level.WARNING,
-					"HTTP response status code: " +
-						httpResponse.getStatusCode());
-
-				throw new Problem.ProblemException(Problem.toDTO(content));
-			}
-			else {
-				_logger.fine("HTTP response content: " + content);
-				_logger.fine(
-					"HTTP response message: " + httpResponse.getMessage());
-				_logger.fine(
-					"HTTP response status code: " +
-						httpResponse.getStatusCode());
-			}
-
-			try {
-				return;
-			}
-			catch (Exception e) {
-				_logger.log(
-					Level.WARNING,
-					"Unable to process HTTP response: " + content, e);
-
-				throw new Problem.ProblemException(Problem.toDTO(content));
-			}
-		}
-
-		public HttpInvoker.HttpResponse postDataSourceHttpResponse(
-				DataSourceToken dataSourceToken)
-			throws Exception {
-
-			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
-
-			httpInvoker.body(dataSourceToken.toString(), "application/json");
-
-			if (_builder._locale != null) {
-				httpInvoker.header(
-					"Accept-Language", _builder._locale.toLanguageTag());
-			}
-
-			for (Map.Entry<String, String> entry :
-					_builder._headers.entrySet()) {
-
-				httpInvoker.header(entry.getKey(), entry.getValue());
-			}
-
-			for (Map.Entry<String, String> entry :
-					_builder._parameters.entrySet()) {
-
-				httpInvoker.parameter(entry.getKey(), entry.getValue());
-			}
-
-			httpInvoker.httpMethod(HttpInvoker.HttpMethod.POST);
-
-			httpInvoker.path(
-				_builder._scheme + "://" + _builder._host + ":" +
-					_builder._port + _builder._contextPath +
-						"/o/analytics-settings-rest/v1.0/data-source");
-
-			httpInvoker.userNameAndPassword(
-				_builder._login + ":" + _builder._password);
-
-			return httpInvoker.invoke();
-		}
-
-		private DataSourceResourceImpl(Builder builder) {
+		private ChannelResourceImpl(Builder builder) {
 			_builder = builder;
 		}
 
 		private static final Logger _logger = Logger.getLogger(
-			DataSourceResource.class.getName());
+			ChannelResource.class.getName());
 
 		private Builder _builder;
 

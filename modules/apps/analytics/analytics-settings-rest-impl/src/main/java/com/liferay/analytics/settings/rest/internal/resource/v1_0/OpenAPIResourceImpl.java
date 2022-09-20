@@ -80,6 +80,8 @@ public class OpenAPIResourceImpl {
 
 	private final Set<Class<?>> _resourceClasses = new HashSet<Class<?>>() {
 		{
+			add(ChannelResourceImpl.class);
+
 			add(DataSourceResourceImpl.class);
 
 			add(OpenAPIResourceImpl.class);

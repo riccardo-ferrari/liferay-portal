@@ -14,12 +14,16 @@
 
 package com.liferay.analytics.settings.rest.internal.graphql.mutation.v1_0;
 
+import com.liferay.analytics.settings.rest.dto.v1_0.DataSourceToken;
+import com.liferay.analytics.settings.rest.resource.v1_0.DataSourceResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
+import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
+import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
 
 import java.util.function.BiFunction;
 
@@ -38,6 +42,38 @@ import org.osgi.service.component.ComponentServiceObjects;
  */
 @Generated("")
 public class Mutation {
+
+	public static void setDataSourceResourceComponentServiceObjects(
+		ComponentServiceObjects<DataSourceResource>
+			dataSourceResourceComponentServiceObjects) {
+
+		_dataSourceResourceComponentServiceObjects =
+			dataSourceResourceComponentServiceObjects;
+	}
+
+	@GraphQLField
+	public boolean deleteDataSource() throws Exception {
+		_applyVoidComponentServiceObjects(
+			_dataSourceResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			dataSourceResource -> dataSourceResource.deleteDataSource());
+
+		return true;
+	}
+
+	@GraphQLField
+	public boolean createDataSource(
+			@GraphQLName("dataSourceToken") DataSourceToken dataSourceToken)
+		throws Exception {
+
+		_applyVoidComponentServiceObjects(
+			_dataSourceResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			dataSourceResource -> dataSourceResource.postDataSource(
+				dataSourceToken));
+
+		return true;
+	}
 
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R
 			_applyComponentServiceObjects(
@@ -76,6 +112,22 @@ public class Mutation {
 			componentServiceObjects.ungetService(resource);
 		}
 	}
+
+	private void _populateResourceContext(DataSourceResource dataSourceResource)
+		throws Exception {
+
+		dataSourceResource.setContextAcceptLanguage(_acceptLanguage);
+		dataSourceResource.setContextCompany(_company);
+		dataSourceResource.setContextHttpServletRequest(_httpServletRequest);
+		dataSourceResource.setContextHttpServletResponse(_httpServletResponse);
+		dataSourceResource.setContextUriInfo(_uriInfo);
+		dataSourceResource.setContextUser(_user);
+		dataSourceResource.setGroupLocalService(_groupLocalService);
+		dataSourceResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private static ComponentServiceObjects<DataSourceResource>
+		_dataSourceResourceComponentServiceObjects;
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;
