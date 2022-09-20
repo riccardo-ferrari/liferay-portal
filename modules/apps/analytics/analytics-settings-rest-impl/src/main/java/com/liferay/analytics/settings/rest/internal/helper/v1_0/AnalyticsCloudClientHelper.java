@@ -136,6 +136,64 @@ public class AnalyticsCloudClientHelper {
 		return null;
 	}
 
+	public JSONObject fetchChannelsPage(
+			long companyId, String keywords, int page, int size)
+		throws Exception {
+
+		AnalyticsConfiguration analyticsConfiguration =
+			_configurationProvider.getCompanyConfiguration(
+				AnalyticsConfiguration.class, companyId);
+
+		try {
+			Http.Options options = new Http.Options();
+
+			String url = HttpComponentsUtil.addParameter(
+				analyticsConfiguration.liferayAnalyticsFaroBackendURL() +
+					"/api/1.0/channels",
+				"page", page);
+
+			url = HttpComponentsUtil.addParameter(url, "size", size);
+
+			if (Validator.isNotNull(keywords)) {
+				url = HttpComponentsUtil.addParameter(url, "filter", keywords);
+			}
+
+			options.addHeader(
+				"OSB-Asah-Faro-Backend-Security-Signature",
+				analyticsConfiguration.
+					liferayAnalyticsFaroBackendSecuritySignature());
+			options.addHeader(
+				"OSB-Asah-Project-ID",
+				analyticsConfiguration.liferayAnalyticsProjectId());
+			options.setLocation(url);
+
+			InputStream inputStream = _http.URLtoInputStream(options);
+
+			Http.Response response = options.getResponse();
+
+			JSONObject responseJSONObject = JSONFactoryUtil.createJSONObject(
+				StringUtil.read(inputStream));
+
+			if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				return responseJSONObject;
+			}
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					String.format(
+						"Received response code %s",
+						response.getResponseCode()));
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+		}
+
+		return null;
+	}
+
 	private JSONObject _createTokenJSONObject(String connectionToken)
 		throws Exception {
 
