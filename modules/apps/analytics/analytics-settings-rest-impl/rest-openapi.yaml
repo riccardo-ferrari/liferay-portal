@@ -90,6 +90,38 @@ paths:
                                     $ref: "#/components/schemas/Channel"
                                 type: array
             tags: ["Channel"]
+        post:
+            operationId: postChannel
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Channel"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Channel"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Channel"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Channel"
+                    descritpion:
+                        Post New Channel
+                500:
+                    content:
+                        application/json:
+                            schema:
+                            type: string
+                        application/xml:
+                            schema:
+                            type: string
+                    description:
+                        Unexpected error
+            tags: ["Channel"]
     "/data-source":
         delete:
             operationId: deleteDataSource
