@@ -15,9 +15,12 @@
 package com.liferay.analytics.settings.rest.internal.helper.v1_0;
 
 import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -26,6 +29,7 @@ import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.util.Base64;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -43,6 +47,60 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true, service = AnalyticsCloudClientHelper.class)
 public class AnalyticsCloudClientHelper {
+
+	public JSONObject addChannel(long companyId, String name) throws Exception {
+		AnalyticsConfiguration analyticsConfiguration =
+			_configurationProvider.getCompanyConfiguration(
+				AnalyticsConfiguration.class, companyId);
+
+		try {
+			Http.Options options = new Http.Options();
+
+			options.addHeader("Content-Type", ContentTypes.APPLICATION_JSON);
+			options.addHeader(
+				"OSB-Asah-Faro-Backend-Security-Signature",
+				analyticsConfiguration.
+					liferayAnalyticsFaroBackendSecuritySignature());
+			options.addHeader(
+				"OSB-Asah-Project-ID",
+				analyticsConfiguration.liferayAnalyticsProjectId());
+			options.setBody(
+				JSONUtil.put(
+					"name", name
+				).toString(),
+				ContentTypes.APPLICATION_JSON, StringPool.UTF8);
+			options.setLocation(
+				analyticsConfiguration.liferayAnalyticsFaroBackendURL() +
+					"/api/1.0/channels");
+
+			options.setPost(true);
+
+			InputStream inputStream = _http.URLtoInputStream(options);
+
+			Http.Response response = options.getResponse();
+
+			JSONArray responseJSONArray = JSONFactoryUtil.createJSONArray(
+				StringUtil.read(inputStream));
+
+			if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				return responseJSONArray.getJSONObject(0);
+			}
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					String.format(
+						"Received response code %s",
+						response.getResponseCode()));
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+		}
+
+		return null;
+	}
 
 	public JSONObject connectDataSource(long companyId, String connectionToken)
 		throws Exception {
