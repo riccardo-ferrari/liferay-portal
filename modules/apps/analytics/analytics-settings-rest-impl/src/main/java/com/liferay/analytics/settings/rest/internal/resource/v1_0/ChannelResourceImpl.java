@@ -66,6 +66,13 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 			pagination, pageJSONObject.getInt("totalElements"));
 	}
 
+	@Override
+	public Channel postChannel(Channel channel) throws Exception {
+		return _channelDTOConverter.toDTO(
+			_analyticsCloudClientHelper.addChannel(
+				contextCompany.getCompanyId(), channel.getName()));
+	}
+
 	@Reference
 	protected DTOConverterRegistry dtoConverterRegistry;
 
