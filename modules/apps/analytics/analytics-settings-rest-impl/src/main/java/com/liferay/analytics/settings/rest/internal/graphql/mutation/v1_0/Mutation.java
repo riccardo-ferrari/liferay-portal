@@ -14,7 +14,9 @@
 
 package com.liferay.analytics.settings.rest.internal.graphql.mutation.v1_0;
 
+import com.liferay.analytics.settings.rest.dto.v1_0.Channel;
 import com.liferay.analytics.settings.rest.dto.v1_0.DataSourceToken;
+import com.liferay.analytics.settings.rest.resource.v1_0.ChannelResource;
 import com.liferay.analytics.settings.rest.resource.v1_0.DataSourceResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
@@ -43,12 +45,30 @@ import org.osgi.service.component.ComponentServiceObjects;
 @Generated("")
 public class Mutation {
 
+	public static void setChannelResourceComponentServiceObjects(
+		ComponentServiceObjects<ChannelResource>
+			channelResourceComponentServiceObjects) {
+
+		_channelResourceComponentServiceObjects =
+			channelResourceComponentServiceObjects;
+	}
+
 	public static void setDataSourceResourceComponentServiceObjects(
 		ComponentServiceObjects<DataSourceResource>
 			dataSourceResourceComponentServiceObjects) {
 
 		_dataSourceResourceComponentServiceObjects =
 			dataSourceResourceComponentServiceObjects;
+	}
+
+	@GraphQLField
+	public Channel createChannel(@GraphQLName("channel") Channel channel)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_channelResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			channelResource -> channelResource.postChannel(channel));
 	}
 
 	@GraphQLField
@@ -113,6 +133,19 @@ public class Mutation {
 		}
 	}
 
+	private void _populateResourceContext(ChannelResource channelResource)
+		throws Exception {
+
+		channelResource.setContextAcceptLanguage(_acceptLanguage);
+		channelResource.setContextCompany(_company);
+		channelResource.setContextHttpServletRequest(_httpServletRequest);
+		channelResource.setContextHttpServletResponse(_httpServletResponse);
+		channelResource.setContextUriInfo(_uriInfo);
+		channelResource.setContextUser(_user);
+		channelResource.setGroupLocalService(_groupLocalService);
+		channelResource.setRoleLocalService(_roleLocalService);
+	}
+
 	private void _populateResourceContext(DataSourceResource dataSourceResource)
 		throws Exception {
 
@@ -126,6 +159,8 @@ public class Mutation {
 		dataSourceResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private static ComponentServiceObjects<ChannelResource>
+		_channelResourceComponentServiceObjects;
 	private static ComponentServiceObjects<DataSourceResource>
 		_dataSourceResourceComponentServiceObjects;
 

@@ -336,6 +336,23 @@ public abstract class BaseChannelResourceTestCase {
 			"This method needs to be implemented");
 	}
 
+	@Test
+	public void testPostChannel() throws Exception {
+		Channel randomChannel = randomChannel();
+
+		Channel postChannel = testPostChannel_addChannel(randomChannel);
+
+		assertEquals(randomChannel, postChannel);
+		assertValid(postChannel);
+	}
+
+	protected Channel testPostChannel_addChannel(Channel channel)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
 	@Rule
 	public SearchTestRule searchTestRule = new SearchTestRule();
 

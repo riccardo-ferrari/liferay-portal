@@ -39,6 +39,8 @@ public class ServletDataImpl implements ServletData {
 
 	@Activate
 	public void activate(BundleContext bundleContext) {
+		Mutation.setChannelResourceComponentServiceObjects(
+			_channelResourceComponentServiceObjects);
 		Mutation.setDataSourceResourceComponentServiceObjects(
 			_dataSourceResourceComponentServiceObjects);
 
@@ -62,11 +64,11 @@ public class ServletDataImpl implements ServletData {
 	}
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
-	private ComponentServiceObjects<DataSourceResource>
-		_dataSourceResourceComponentServiceObjects;
-
-	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<ChannelResource>
 		_channelResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<DataSourceResource>
+		_dataSourceResourceComponentServiceObjects;
 
 }
