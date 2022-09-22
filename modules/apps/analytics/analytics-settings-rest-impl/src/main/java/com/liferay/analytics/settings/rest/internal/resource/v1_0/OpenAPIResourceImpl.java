@@ -84,6 +84,8 @@ public class OpenAPIResourceImpl {
 
 			add(DataSourceResourceImpl.class);
 
+			add(GroupResourceImpl.class);
+
 			add(OpenAPIResourceImpl.class);
 		}
 	};

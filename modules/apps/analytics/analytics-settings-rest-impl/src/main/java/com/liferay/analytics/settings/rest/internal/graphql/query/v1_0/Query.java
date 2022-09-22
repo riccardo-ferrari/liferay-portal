@@ -15,7 +15,9 @@
 package com.liferay.analytics.settings.rest.internal.graphql.query.v1_0;
 
 import com.liferay.analytics.settings.rest.dto.v1_0.Channel;
+import com.liferay.analytics.settings.rest.dto.v1_0.Group;
 import com.liferay.analytics.settings.rest.resource.v1_0.ChannelResource;
+import com.liferay.analytics.settings.rest.resource.v1_0.GroupResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.search.Sort;
@@ -55,6 +57,14 @@ public class Query {
 			channelResourceComponentServiceObjects;
 	}
 
+	public static void setGroupResourceComponentServiceObjects(
+		ComponentServiceObjects<GroupResource>
+			groupResourceComponentServiceObjects) {
+
+		_groupResourceComponentServiceObjects =
+			groupResourceComponentServiceObjects;
+	}
+
 	/**
 	 * Invoke this method with the command line:
 	 *
@@ -78,6 +88,27 @@ public class Query {
 					Pagination.of(page, pageSize))));
 	}
 
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {groups(includeCommerceChannels: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public GroupPage groups(
+			@GraphQLName("includeCommerceChannels") Boolean
+				includeCommerceChannels,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_groupResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			groupResource -> new GroupPage(
+				groupResource.getGroupsPage(
+					includeCommerceChannels, Pagination.of(page, pageSize))));
+	}
+
 	@GraphQLName("ChannelPage")
 	public class ChannelPage {
 
@@ -96,6 +127,39 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<Channel> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("GroupPage")
+	public class GroupPage {
+
+		public GroupPage(Page groupPage) {
+			actions = groupPage.getActions();
+
+			items = groupPage.getItems();
+			lastPage = groupPage.getLastPage();
+			page = groupPage.getPage();
+			pageSize = groupPage.getPageSize();
+			totalCount = groupPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map> actions;
+
+		@GraphQLField
+		protected java.util.Collection<Group> items;
 
 		@GraphQLField
 		protected long lastPage;
@@ -143,8 +207,23 @@ public class Query {
 		channelResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private void _populateResourceContext(GroupResource groupResource)
+		throws Exception {
+
+		groupResource.setContextAcceptLanguage(_acceptLanguage);
+		groupResource.setContextCompany(_company);
+		groupResource.setContextHttpServletRequest(_httpServletRequest);
+		groupResource.setContextHttpServletResponse(_httpServletResponse);
+		groupResource.setContextUriInfo(_uriInfo);
+		groupResource.setContextUser(_user);
+		groupResource.setGroupLocalService(_groupLocalService);
+		groupResource.setRoleLocalService(_roleLocalService);
+	}
+
 	private static ComponentServiceObjects<ChannelResource>
 		_channelResourceComponentServiceObjects;
+	private static ComponentServiceObjects<GroupResource>
+		_groupResourceComponentServiceObjects;
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;

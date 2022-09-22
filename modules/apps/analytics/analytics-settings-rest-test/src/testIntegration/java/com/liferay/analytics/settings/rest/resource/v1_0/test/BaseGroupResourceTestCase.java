@@ -22,13 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
-import com.liferay.analytics.settings.rest.client.dto.v1_0.Channel;
 import com.liferay.analytics.settings.rest.client.dto.v1_0.Group;
 import com.liferay.analytics.settings.rest.client.http.HttpInvoker;
 import com.liferay.analytics.settings.rest.client.pagination.Page;
 import com.liferay.analytics.settings.rest.client.pagination.Pagination;
-import com.liferay.analytics.settings.rest.client.resource.v1_0.ChannelResource;
-import com.liferay.analytics.settings.rest.client.serdes.v1_0.ChannelSerDes;
+import com.liferay.analytics.settings.rest.client.resource.v1_0.GroupResource;
+import com.liferay.analytics.settings.rest.client.serdes.v1_0.GroupSerDes;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -47,7 +46,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
-import com.liferay.portal.search.test.util.SearchTestRule;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
@@ -58,7 +56,6 @@ import java.text.DateFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,8 +70,6 @@ import javax.annotation.Generated;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 
-import org.apache.commons.lang.time.DateUtils;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -88,7 +83,7 @@ import org.junit.Test;
  * @generated
  */
 @Generated("")
-public abstract class BaseChannelResourceTestCase {
+public abstract class BaseGroupResourceTestCase {
 
 	@ClassRule
 	@Rule
@@ -109,11 +104,11 @@ public abstract class BaseChannelResourceTestCase {
 		testCompany = CompanyLocalServiceUtil.getCompany(
 			testGroup.getCompanyId());
 
-		_channelResource.setContextCompany(testCompany);
+		_groupResource.setContextCompany(testCompany);
 
-		ChannelResource.Builder builder = ChannelResource.builder();
+		GroupResource.Builder builder = GroupResource.builder();
 
-		channelResource = builder.authentication(
+		groupResource = builder.authentication(
 			"test@liferay.com", "test"
 		).locale(
 			LocaleUtil.getDefault()
@@ -144,13 +139,13 @@ public abstract class BaseChannelResourceTestCase {
 			}
 		};
 
-		Channel channel1 = randomChannel();
+		Group group1 = randomGroup();
 
-		String json = objectMapper.writeValueAsString(channel1);
+		String json = objectMapper.writeValueAsString(group1);
 
-		Channel channel2 = ChannelSerDes.toDTO(json);
+		Group group2 = GroupSerDes.toDTO(json);
 
-		Assert.assertTrue(equals(channel1, channel2));
+		Assert.assertTrue(equals(group1, group2));
 	}
 
 	@Test
@@ -170,10 +165,10 @@ public abstract class BaseChannelResourceTestCase {
 			}
 		};
 
-		Channel channel = randomChannel();
+		Group group = randomGroup();
 
-		String json1 = objectMapper.writeValueAsString(channel);
-		String json2 = ChannelSerDes.toJSON(channel);
+		String json1 = objectMapper.writeValueAsString(group);
+		String json2 = GroupSerDes.toJSON(group);
 
 		Assert.assertEquals(
 			objectMapper.readTree(json1), objectMapper.readTree(json2));
@@ -183,192 +178,144 @@ public abstract class BaseChannelResourceTestCase {
 	public void testEscapeRegexInStringFields() throws Exception {
 		String regex = "^[0-9]+(\\.[0-9]{1,2})\"?";
 
-		Channel channel = randomChannel();
+		Group group = randomGroup();
 
-		channel.setChannelId(regex);
-		channel.setName(regex);
+		group.setChannelName(regex);
+		group.setGroupType(regex);
+		group.setName(regex);
 
-		String json = ChannelSerDes.toJSON(channel);
+		String json = GroupSerDes.toJSON(group);
 
 		Assert.assertFalse(json.contains(regex));
 
-		channel = ChannelSerDes.toDTO(json);
+		group = GroupSerDes.toDTO(json);
 
-		Assert.assertEquals(regex, channel.getChannelId());
-		Assert.assertEquals(regex, channel.getName());
+		Assert.assertEquals(regex, group.getChannelName());
+		Assert.assertEquals(regex, group.getGroupType());
+		Assert.assertEquals(regex, group.getName());
 	}
 
 	@Test
-	public void testGetChannelPage() throws Exception {
-		Page<Channel> page = channelResource.getChannelPage(
-			RandomTestUtil.randomString(), null, Pagination.of(1, 10));
+	public void testGetGroupsPage() throws Exception {
+		Page<Group> page = groupResource.getGroupsPage(
+			null, Pagination.of(1, 10));
 
 		long totalCount = page.getTotalCount();
 
-		Channel channel1 = testGetChannelPage_addChannel(randomChannel());
+		Group group1 = testGetGroupsPage_addGroup(randomGroup());
 
-		Channel channel2 = testGetChannelPage_addChannel(randomChannel());
+		Group group2 = testGetGroupsPage_addGroup(randomGroup());
 
-		page = channelResource.getChannelPage(null, null, Pagination.of(1, 10));
+		page = groupResource.getGroupsPage(null, Pagination.of(1, 10));
 
 		Assert.assertEquals(totalCount + 2, page.getTotalCount());
 
-		assertContains(channel1, (List<Channel>)page.getItems());
-		assertContains(channel2, (List<Channel>)page.getItems());
+		assertContains(group1, (List<Group>)page.getItems());
+		assertContains(group2, (List<Group>)page.getItems());
 		assertValid(page);
 	}
 
 	@Test
-	public void testGetChannelPageWithFilterDateTimeEquals() throws Exception {
-		List<EntityField> entityFields = getEntityFields(
-			EntityField.Type.DATE_TIME);
-
-		if (entityFields.isEmpty()) {
-			return;
-		}
-
-		Channel channel1 = randomChannel();
-
-		channel1 = testGetChannelPage_addChannel(channel1);
-
-		for (EntityField entityField : entityFields) {
-			Page<Channel> page = channelResource.getChannelPage(
-				null, getFilterString(entityField, "between", channel1),
-				Pagination.of(1, 2));
-
-			assertEquals(
-				Collections.singletonList(channel1),
-				(List<Channel>)page.getItems());
-		}
-	}
-
-	@Test
-	public void testGetChannelPageWithFilterDoubleEquals() throws Exception {
-		List<EntityField> entityFields = getEntityFields(
-			EntityField.Type.DOUBLE);
-
-		if (entityFields.isEmpty()) {
-			return;
-		}
-
-		Channel channel1 = testGetChannelPage_addChannel(randomChannel());
-
-		@SuppressWarnings("PMD.UnusedLocalVariable")
-		Channel channel2 = testGetChannelPage_addChannel(randomChannel());
-
-		for (EntityField entityField : entityFields) {
-			Page<Channel> page = channelResource.getChannelPage(
-				null, getFilterString(entityField, "eq", channel1),
-				Pagination.of(1, 2));
-
-			assertEquals(
-				Collections.singletonList(channel1),
-				(List<Channel>)page.getItems());
-		}
-	}
-
-	@Test
-	public void testGetChannelPageWithFilterStringEquals() throws Exception {
-		List<EntityField> entityFields = getEntityFields(
-			EntityField.Type.STRING);
-
-		if (entityFields.isEmpty()) {
-			return;
-		}
-
-		Channel channel1 = testGetChannelPage_addChannel(randomChannel());
-
-		@SuppressWarnings("PMD.UnusedLocalVariable")
-		Channel channel2 = testGetChannelPage_addChannel(randomChannel());
-
-		for (EntityField entityField : entityFields) {
-			Page<Channel> page = channelResource.getChannelPage(
-				null, getFilterString(entityField, "eq", channel1),
-				Pagination.of(1, 2));
-
-			assertEquals(
-				Collections.singletonList(channel1),
-				(List<Channel>)page.getItems());
-		}
-	}
-
-	@Test
-	public void testGetChannelPageWithPagination() throws Exception {
-		Page<Channel> totalPage = channelResource.getChannelPage(
-			null, null, null);
+	public void testGetGroupsPageWithPagination() throws Exception {
+		Page<Group> totalPage = groupResource.getGroupsPage(null, null);
 
 		int totalCount = GetterUtil.getInteger(totalPage.getTotalCount());
 
-		Channel channel1 = testGetChannelPage_addChannel(randomChannel());
+		Group group1 = testGetGroupsPage_addGroup(randomGroup());
 
-		Channel channel2 = testGetChannelPage_addChannel(randomChannel());
+		Group group2 = testGetGroupsPage_addGroup(randomGroup());
 
-		Channel channel3 = testGetChannelPage_addChannel(randomChannel());
+		Group group3 = testGetGroupsPage_addGroup(randomGroup());
 
-		Page<Channel> page1 = channelResource.getChannelPage(
-			null, null, Pagination.of(1, totalCount + 2));
+		Page<Group> page1 = groupResource.getGroupsPage(
+			null, Pagination.of(1, totalCount + 2));
 
-		List<Channel> channels1 = (List<Channel>)page1.getItems();
+		List<Group> groups1 = (List<Group>)page1.getItems();
 
-		Assert.assertEquals(
-			channels1.toString(), totalCount + 2, channels1.size());
+		Assert.assertEquals(groups1.toString(), totalCount + 2, groups1.size());
 
-		Page<Channel> page2 = channelResource.getChannelPage(
-			null, null, Pagination.of(2, totalCount + 2));
+		Page<Group> page2 = groupResource.getGroupsPage(
+			null, Pagination.of(2, totalCount + 2));
 
 		Assert.assertEquals(totalCount + 3, page2.getTotalCount());
 
-		List<Channel> channels2 = (List<Channel>)page2.getItems();
+		List<Group> groups2 = (List<Group>)page2.getItems();
 
-		Assert.assertEquals(channels2.toString(), 1, channels2.size());
+		Assert.assertEquals(groups2.toString(), 1, groups2.size());
 
-		Page<Channel> page3 = channelResource.getChannelPage(
-			null, null, Pagination.of(1, totalCount + 3));
+		Page<Group> page3 = groupResource.getGroupsPage(
+			null, Pagination.of(1, totalCount + 3));
 
-		assertContains(channel1, (List<Channel>)page3.getItems());
-		assertContains(channel2, (List<Channel>)page3.getItems());
-		assertContains(channel3, (List<Channel>)page3.getItems());
+		assertContains(group1, (List<Group>)page3.getItems());
+		assertContains(group2, (List<Group>)page3.getItems());
+		assertContains(group3, (List<Group>)page3.getItems());
 	}
 
-	protected Channel testGetChannelPage_addChannel(Channel channel)
-		throws Exception {
-
+	protected Group testGetGroupsPage_addGroup(Group group) throws Exception {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
 	@Test
-	public void testPostChannel() throws Exception {
-		Channel randomChannel = randomChannel();
+	public void testGraphQLGetGroupsPage() throws Exception {
+		GraphQLField graphQLField = new GraphQLField(
+			"groups",
+			new HashMap<String, Object>() {
+				{
+					put("page", 1);
+					put("pageSize", 10);
+				}
+			},
+			new GraphQLField("items", getGraphQLFields()),
+			new GraphQLField("page"), new GraphQLField("totalCount"));
 
-		Channel postChannel = testPostChannel_addChannel(randomChannel);
+		JSONObject groupsJSONObject = JSONUtil.getValueAsJSONObject(
+			invokeGraphQLQuery(graphQLField), "JSONObject/data",
+			"JSONObject/groups");
 
-		assertEquals(randomChannel, postChannel);
-		assertValid(postChannel);
+		long totalCount = groupsJSONObject.getLong("totalCount");
+
+		Group group1 = testGraphQLGetGroupsPage_addGroup();
+		Group group2 = testGraphQLGetGroupsPage_addGroup();
+
+		groupsJSONObject = JSONUtil.getValueAsJSONObject(
+			invokeGraphQLQuery(graphQLField), "JSONObject/data",
+			"JSONObject/groups");
+
+		Assert.assertEquals(
+			totalCount + 2, groupsJSONObject.getLong("totalCount"));
+
+		assertContains(
+			group1,
+			Arrays.asList(
+				GroupSerDes.toDTOs(groupsJSONObject.getString("items"))));
+		assertContains(
+			group2,
+			Arrays.asList(
+				GroupSerDes.toDTOs(groupsJSONObject.getString("items"))));
 	}
 
-	protected Channel testPostChannel_addChannel(Channel channel)
-		throws Exception {
+	protected Group testGraphQLGetGroupsPage_addGroup() throws Exception {
+		return testGraphQLGroup_addGroup();
+	}
 
+	protected Group testGraphQLGroup_addGroup() throws Exception {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	@Rule
-	public SearchTestRule searchTestRule = new SearchTestRule();
-
-	protected void assertContains(Channel channel, List<Channel> channels) {
+	protected void assertContains(Group group, List<Group> groups) {
 		boolean contains = false;
 
-		for (Channel item : channels) {
-			if (equals(channel, item)) {
+		for (Group item : groups) {
+			if (equals(group, item)) {
 				contains = true;
 
 				break;
 			}
 		}
 
-		Assert.assertTrue(channels + " does not contain " + channel, contains);
+		Assert.assertTrue(groups + " does not contain " + group, contains);
 	}
 
 	protected void assertHttpResponseStatusCode(
@@ -379,35 +326,32 @@ public abstract class BaseChannelResourceTestCase {
 			expectedHttpResponseStatusCode, actualHttpResponse.getStatusCode());
 	}
 
-	protected void assertEquals(Channel channel1, Channel channel2) {
+	protected void assertEquals(Group group1, Group group2) {
 		Assert.assertTrue(
-			channel1 + " does not equal " + channel2,
-			equals(channel1, channel2));
+			group1 + " does not equal " + group2, equals(group1, group2));
 	}
 
-	protected void assertEquals(
-		List<Channel> channels1, List<Channel> channels2) {
+	protected void assertEquals(List<Group> groups1, List<Group> groups2) {
+		Assert.assertEquals(groups1.size(), groups2.size());
 
-		Assert.assertEquals(channels1.size(), channels2.size());
+		for (int i = 0; i < groups1.size(); i++) {
+			Group group1 = groups1.get(i);
+			Group group2 = groups2.get(i);
 
-		for (int i = 0; i < channels1.size(); i++) {
-			Channel channel1 = channels1.get(i);
-			Channel channel2 = channels2.get(i);
-
-			assertEquals(channel1, channel2);
+			assertEquals(group1, group2);
 		}
 	}
 
 	protected void assertEqualsIgnoringOrder(
-		List<Channel> channels1, List<Channel> channels2) {
+		List<Group> groups1, List<Group> groups2) {
 
-		Assert.assertEquals(channels1.size(), channels2.size());
+		Assert.assertEquals(groups1.size(), groups2.size());
 
-		for (Channel channel1 : channels1) {
+		for (Group group1 : groups1) {
 			boolean contains = false;
 
-			for (Channel channel2 : channels2) {
-				if (equals(channel1, channel2)) {
+			for (Group group2 : groups2) {
+				if (equals(group1, group2)) {
 					contains = true;
 
 					break;
@@ -415,34 +359,38 @@ public abstract class BaseChannelResourceTestCase {
 			}
 
 			Assert.assertTrue(
-				channels2 + " does not contain " + channel1, contains);
+				groups2 + " does not contain " + group1, contains);
 		}
 	}
 
-	protected void assertValid(Channel channel) throws Exception {
+	protected void assertValid(Group group) throws Exception {
 		boolean valid = true;
+
+		if (group.getId() == null) {
+			valid = false;
+		}
 
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
 
-			if (Objects.equals("channelId", additionalAssertFieldName)) {
-				if (channel.getChannelId() == null) {
+			if (Objects.equals("attributes", additionalAssertFieldName)) {
+				if (group.getAttributes() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("createDate", additionalAssertFieldName)) {
-				if (channel.getCreateDate() == null) {
+			if (Objects.equals("channelName", additionalAssertFieldName)) {
+				if (group.getChannelName() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("dataSources", additionalAssertFieldName)) {
-				if (channel.getDataSources() == null) {
+			if (Objects.equals("groupType", additionalAssertFieldName)) {
+				if (group.getGroupType() == null) {
 					valid = false;
 				}
 
@@ -450,7 +398,7 @@ public abstract class BaseChannelResourceTestCase {
 			}
 
 			if (Objects.equals("name", additionalAssertFieldName)) {
-				if (channel.getName() == null) {
+				if (group.getName() == null) {
 					valid = false;
 				}
 
@@ -465,12 +413,12 @@ public abstract class BaseChannelResourceTestCase {
 		Assert.assertTrue(valid);
 	}
 
-	protected void assertValid(Page<Channel> page) {
+	protected void assertValid(Page<Group> page) {
 		boolean valid = false;
 
-		java.util.Collection<Channel> channels = page.getItems();
+		java.util.Collection<Group> groups = page.getItems();
 
-		int size = channels.size();
+		int size = groups.size();
 
 		if ((page.getLastPage() > 0) && (page.getPage() > 0) &&
 			(page.getPageSize() > 0) && (page.getTotalCount() > 0) &&
@@ -491,8 +439,7 @@ public abstract class BaseChannelResourceTestCase {
 
 		for (java.lang.reflect.Field field :
 				getDeclaredFields(
-					com.liferay.analytics.settings.rest.dto.v1_0.Channel.
-						class)) {
+					com.liferay.analytics.settings.rest.dto.v1_0.Group.class)) {
 
 			if (!ArrayUtil.contains(
 					getAdditionalAssertFieldNames(), field.getName())) {
@@ -540,17 +487,18 @@ public abstract class BaseChannelResourceTestCase {
 		return new String[0];
 	}
 
-	protected boolean equals(Channel channel1, Channel channel2) {
-		if (channel1 == channel2) {
+	protected boolean equals(Group group1, Group group2) {
+		if (group1 == group2) {
 			return true;
 		}
 
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
 
-			if (Objects.equals("channelId", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						channel1.getChannelId(), channel2.getChannelId())) {
+			if (Objects.equals("attributes", additionalAssertFieldName)) {
+				if (!equals(
+						(Map)group1.getAttributes(),
+						(Map)group2.getAttributes())) {
 
 					return false;
 				}
@@ -558,9 +506,9 @@ public abstract class BaseChannelResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("createDate", additionalAssertFieldName)) {
+			if (Objects.equals("channelName", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						channel1.getCreateDate(), channel2.getCreateDate())) {
+						group1.getChannelName(), group2.getChannelName())) {
 
 					return false;
 				}
@@ -568,10 +516,18 @@ public abstract class BaseChannelResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("dataSources", additionalAssertFieldName)) {
+			if (Objects.equals("groupType", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						channel1.getDataSources(), channel2.getDataSources())) {
+						group1.getGroupType(), group2.getGroupType())) {
 
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("id", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(group1.getId(), group2.getId())) {
 					return false;
 				}
 
@@ -579,9 +535,7 @@ public abstract class BaseChannelResourceTestCase {
 			}
 
 			if (Objects.equals("name", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						channel1.getName(), channel2.getName())) {
-
+				if (!Objects.deepEquals(group1.getName(), group2.getName())) {
 					return false;
 				}
 
@@ -638,13 +592,13 @@ public abstract class BaseChannelResourceTestCase {
 	protected java.util.Collection<EntityField> getEntityFields()
 		throws Exception {
 
-		if (!(_channelResource instanceof EntityModelResource)) {
+		if (!(_groupResource instanceof EntityModelResource)) {
 			throw new UnsupportedOperationException(
 				"Resource is not an instance of EntityModelResource");
 		}
 
 		EntityModelResource entityModelResource =
-			(EntityModelResource)_channelResource;
+			(EntityModelResource)_groupResource;
 
 		EntityModel entityModel = entityModelResource.getEntityModel(
 			new MultivaluedHashMap());
@@ -673,7 +627,7 @@ public abstract class BaseChannelResourceTestCase {
 	}
 
 	protected String getFilterString(
-		EntityField entityField, String operator, Channel channel) {
+		EntityField entityField, String operator, Group group) {
 
 		StringBundler sb = new StringBundler();
 
@@ -685,53 +639,35 @@ public abstract class BaseChannelResourceTestCase {
 		sb.append(operator);
 		sb.append(" ");
 
-		if (entityFieldName.equals("channelId")) {
+		if (entityFieldName.equals("attributes")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("channelName")) {
 			sb.append("'");
-			sb.append(String.valueOf(channel.getChannelId()));
+			sb.append(String.valueOf(group.getChannelName()));
 			sb.append("'");
 
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("createDate")) {
-			if (operator.equals("between")) {
-				sb = new StringBundler();
-
-				sb.append("(");
-				sb.append(entityFieldName);
-				sb.append(" gt ");
-				sb.append(
-					_dateFormat.format(
-						DateUtils.addSeconds(channel.getCreateDate(), -2)));
-				sb.append(" and ");
-				sb.append(entityFieldName);
-				sb.append(" lt ");
-				sb.append(
-					_dateFormat.format(
-						DateUtils.addSeconds(channel.getCreateDate(), 2)));
-				sb.append(")");
-			}
-			else {
-				sb.append(entityFieldName);
-
-				sb.append(" ");
-				sb.append(operator);
-				sb.append(" ");
-
-				sb.append(_dateFormat.format(channel.getCreateDate()));
-			}
+		if (entityFieldName.equals("groupType")) {
+			sb.append("'");
+			sb.append(String.valueOf(group.getGroupType()));
+			sb.append("'");
 
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("dataSources")) {
+		if (entityFieldName.equals("id")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
 		if (entityFieldName.equals("name")) {
 			sb.append("'");
-			sb.append(String.valueOf(channel.getName()));
+			sb.append(String.valueOf(group.getName()));
 			sb.append("'");
 
 			return sb.toString();
@@ -778,28 +714,30 @@ public abstract class BaseChannelResourceTestCase {
 			invoke(queryGraphQLField.toString()));
 	}
 
-	protected Channel randomChannel() throws Exception {
-		return new Channel() {
+	protected Group randomGroup() throws Exception {
+		return new Group() {
 			{
-				channelId = StringUtil.toLowerCase(
+				channelName = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
-				createDate = RandomTestUtil.nextDate();
+				groupType = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				id = RandomTestUtil.randomLong();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
 	}
 
-	protected Channel randomIrrelevantChannel() throws Exception {
-		Channel randomIrrelevantChannel = randomChannel();
+	protected Group randomIrrelevantGroup() throws Exception {
+		Group randomIrrelevantGroup = randomGroup();
 
-		return randomIrrelevantChannel;
+		return randomIrrelevantGroup;
 	}
 
-	protected Channel randomPatchChannel() throws Exception {
-		return randomChannel();
+	protected Group randomPatchGroup() throws Exception {
+		return randomGroup();
 	}
 
-	protected ChannelResource channelResource;
+	protected GroupResource groupResource;
 	protected Group irrelevantGroup;
 	protected Company testCompany;
 	protected Group testGroup;
@@ -985,12 +923,12 @@ public abstract class BaseChannelResourceTestCase {
 	}
 
 	private static final com.liferay.portal.kernel.log.Log _log =
-		LogFactoryUtil.getLog(BaseChannelResourceTestCase.class);
+		LogFactoryUtil.getLog(BaseGroupResourceTestCase.class);
 
 	private static DateFormat _dateFormat;
 
 	@Inject
-	private com.liferay.analytics.settings.rest.resource.v1_0.ChannelResource
-		_channelResource;
+	private com.liferay.analytics.settings.rest.resource.v1_0.GroupResource
+		_groupResource;
 
 }
