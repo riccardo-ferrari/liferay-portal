@@ -31,6 +31,21 @@ components:
             properties:
                 token:
                     type: string
+        Group:
+            properties:
+                attributes:
+                    additionalProperties:
+                        type: string
+                    type: object
+                channelName:
+                    type: string
+                groupType:
+                    type: string
+                id:
+                    format: int64
+                    type: integer
+                name:
+                    type: string
     securitySchemes:
         BasicAuth:
             scheme: basic
@@ -171,3 +186,33 @@ paths:
                     description:
                         Unexpected error
             tags: ["DataSource"]
+    "/groups":
+        get:
+            operationId: getGroupsPage
+            parameters:
+                - in: query
+                  name: includeCommerceChannels
+                  schema:
+                      type: boolean
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Group"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Group"
+                                type: array
+            tags: ["Group"]
