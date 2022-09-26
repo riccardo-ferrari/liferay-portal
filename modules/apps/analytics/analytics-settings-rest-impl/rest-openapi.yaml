@@ -13,6 +13,17 @@ components:
                     type: array
                 name:
                     type: string
+        CommerceChannel:
+            properties:
+                channelName:
+                    type: string
+                id:
+                    format: int64
+                    type: integer
+                name:
+                    type: string
+                relatedSite:
+                    type: string
         DataSource:
             properties:
                 commerceChannelIds:
@@ -30,6 +41,17 @@ components:
         DataSourceToken:
             properties:
                 token:
+                    type: string
+        Site:
+            properties:
+                channelName:
+                    type: string
+                friendlyURL:
+                    type: string
+                id:
+                    format: int64
+                    type: integer
+                name:
                     type: string
     securitySchemes:
         BasicAuth:
@@ -122,6 +144,32 @@ paths:
                     description:
                         Unexpected error
             tags: ["Channel"]
+    "/commerce-channels":
+        get:
+            operationId: getCommerceChannelPage
+            parameters:
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/CommerceChannel"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/CommerceChannel"
+                                type: array
+            tags: ["CommerceChannel"]
     "/data-source":
         delete:
             operationId: deleteDataSource
@@ -171,3 +219,29 @@ paths:
                     description:
                         Unexpected error
             tags: ["DataSource"]
+    "/sites":
+        get:
+            operationId: getSitesPage
+            parameters:
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Site"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Site"
+                                type: array
+            tags: ["Site"]
