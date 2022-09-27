@@ -46,7 +46,7 @@ public class SiteDTOConverter implements DTOConverter<Group, Site> {
 		return new Site() {
 			{
 				channelName = typeSettingsUnicodeProperties.getProperty(
-					"channelName", null);
+					"analyticsChannelId", null);
 				friendlyURL = group.getFriendlyURL();
 				id = group.getGroupId();
 				name = group.getDescriptiveName();

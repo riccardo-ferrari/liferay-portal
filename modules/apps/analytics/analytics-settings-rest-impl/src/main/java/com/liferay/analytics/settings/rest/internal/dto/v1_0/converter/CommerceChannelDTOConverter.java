@@ -16,11 +16,13 @@ package com.liferay.analytics.settings.rest.internal.dto.v1_0.converter;
 
 import com.liferay.analytics.settings.rest.dto.v1_0.CommerceChannel;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Riccardo Ferrari
@@ -30,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 	service = {CommerceChannelDTOConverter.class, DTOConverter.class}
 )
 public class CommerceChannelDTOConverter
-	implements DTOConverter<Group, CommerceChannel> {
+	implements DTOConverter
+		<com.liferay.commerce.product.model.CommerceChannel, CommerceChannel> {
 
 	@Override
 	public String getContentType() {
@@ -39,17 +42,30 @@ public class CommerceChannelDTOConverter
 
 	@Override
 	public CommerceChannel toDTO(
-			DTOConverterContext dtoConverterContext, Group group)
+			DTOConverterContext dtoConverterContext,
+			com.liferay.commerce.product.model.CommerceChannel commerceChannel)
 		throws Exception {
 
+		Group commerceChannelGroup = commerceChannel.getGroup();
+
 		UnicodeProperties typeSettingsUnicodeProperties =
-			group.getTypeSettingsProperties();
+			commerceChannelGroup.getTypeSettingsProperties();
+
+		Group siteGroup = _groupLocalService.fetchGroup(
+			commerceChannel.getSiteGroupId());
 
 		return new CommerceChannel() {
 			{
-				channelName = typeSettingsUnicodeProperties.getProperty("")
+				channelName = typeSettingsUnicodeProperties.getProperty(
+					"analyticsChannelId");
+				id = commerceChannelGroup.getGroupId();
+				name = commerceChannelGroup.getDescriptiveName();
+				relatedSite = siteGroup.getDescriptiveName();
 			}
 		};
 	}
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 }
