@@ -14,9 +14,17 @@
 
 package com.liferay.analytics.settings.rest.internal.resource.v1_0;
 
+import com.liferay.analytics.settings.rest.dto.v1_0.CommerceChannel;
+import com.liferay.analytics.settings.rest.internal.dto.v1_0.converter.CommerceChannelDTOConverter;
 import com.liferay.analytics.settings.rest.resource.v1_0.CommerceChannelResource;
+import com.liferay.commerce.product.service.CommerceChannelService;
+import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
+
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
 /**
@@ -28,4 +36,26 @@ import org.osgi.service.component.annotations.ServiceScope;
 )
 public class CommerceChannelResourceImpl
 	extends BaseCommerceChannelResourceImpl {
+
+	@Override
+	public Page<CommerceChannel> getCommerceChannelPage(Pagination pagination)
+		throws Exception {
+
+		List<com.liferay.commerce.product.model.CommerceChannel>
+			commerceChannels = _commerceChannelService.getCommerceChannels(
+				contextCompany.getCompanyId());
+
+		return Page.of(
+			transform(
+				commerceChannels,
+				group -> _commerceChannelDTOConverter.toDTO(group)),
+			pagination, commerceChannels.size());
+	}
+
+	@Reference
+	private CommerceChannelDTOConverter _commerceChannelDTOConverter;
+
+	@Reference
+	private CommerceChannelService _commerceChannelService;
+
 }
