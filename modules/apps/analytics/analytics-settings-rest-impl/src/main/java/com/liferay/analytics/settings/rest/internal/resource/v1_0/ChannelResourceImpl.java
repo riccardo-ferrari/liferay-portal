@@ -44,20 +44,20 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 			String keywords, Filter filter, Pagination pagination)
 		throws Exception {
 
-		ResultPage<AnalyticsChannel> analyticsChannelResultPage =
-			_analyticsCloudClient.fetchAnalyticsChannelResultPage(
+		ResultPage<AnalyticsChannel> analyticsChannelsResultPage =
+			_analyticsCloudClient.fetchAnalyticsChannelsResultPage(
 				contextCompany.getCompanyId(), keywords,
 				pagination.getPage() - 1, pagination.getPageSize());
 
 		return Page.of(
 			transform(
-				analyticsChannelResultPage.getItems(),
+				analyticsChannelsResultPage.getItems(),
 				analyticsChannel -> _channelDTOConverter.toDTO(
 					new DefaultDTOConverterContext(
 						false, null, dtoConverterRegistry, null,
 						contextUser.getLocale(), null, contextUser),
 					analyticsChannel)),
-			pagination, analyticsChannelResultPage.getTotalElements());
+			pagination, analyticsChannelsResultPage.getTotalElements());
 	}
 
 	@Override
