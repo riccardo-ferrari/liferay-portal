@@ -195,11 +195,11 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 			long companyId, String keywords, int page, int size)
 		throws Exception {
 
-		AnalyticsConfiguration analyticsConfiguration =
-			_configurationProvider.getCompanyConfiguration(
-				AnalyticsConfiguration.class, companyId);
-
 		try {
+			AnalyticsConfiguration analyticsConfiguration =
+				_configurationProvider.getCompanyConfiguration(
+					AnalyticsConfiguration.class, companyId);
+
 			Http.Options options = _getOptions(analyticsConfiguration);
 
 			String url = HttpComponentsUtil.addParameter(
@@ -257,9 +257,9 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 			if (_log.isDebugEnabled()) {
 				_log.debug(exception);
 			}
-		}
 
-		return null;
+			return null;
+		}
 	}
 
 	private JSONObject _decodeToken(String connectionToken) throws Exception {
