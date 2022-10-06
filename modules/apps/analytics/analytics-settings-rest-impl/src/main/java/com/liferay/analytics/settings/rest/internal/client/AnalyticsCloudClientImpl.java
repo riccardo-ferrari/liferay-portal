@@ -248,10 +248,8 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 					embeddedJsonNode.get("channels"));
 			}
 
-			JsonNode pageJsonNode = jsonNode.get("page");
-
 			PageMetadata pageMetadata = _objectMapper.treeToValue(
-				pageJsonNode, PageMetadata.class);
+				jsonNode.get("page"), PageMetadata.class);
 
 			return new ResultPage<>(analyticsChannels, pageMetadata);
 		}
