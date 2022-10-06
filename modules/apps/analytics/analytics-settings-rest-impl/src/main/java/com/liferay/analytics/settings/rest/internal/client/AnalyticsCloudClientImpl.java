@@ -219,44 +219,44 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 
 			Http.Response response = options.getResponse();
 
-			if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				JsonNode jsonNode = _objectMapper.readTree(content);
-
-				JsonNode embeddedJsonNode = jsonNode.get("_embedded");
-
-				List<AnalyticsChannel> analyticsChannels =
-					Collections.emptyList();
-
-				if (embeddedJsonNode != null) {
-					TypeFactory typeFactory = TypeFactory.defaultInstance();
-
-					ObjectReader objectReader = _objectMapper.readerFor(
-						typeFactory.constructCollectionType(
-							ArrayList.class, AnalyticsChannel.class));
-
-					JsonNode embeddedRelJsonNode = embeddedJsonNode.get(
-						"channels");
-
-					analyticsChannels = objectReader.readValue(
-						embeddedRelJsonNode);
+			if (response.getResponseCode() != HttpURLConnection.HTTP_OK) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						String.format(
+							"Received response code %s",
+							response.getResponseCode()));
 				}
 
-				JsonNode pageJsonNode = jsonNode.get("page");
-
-				PageMetadata pageMetadata = _objectMapper.treeToValue(
-					pageJsonNode, PageMetadata.class);
-
-				return new ResultPage<>(analyticsChannels, pageMetadata);
+				throw new PortalException("Unable to fetch Channels page");
 			}
 
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					String.format(
-						"Received response code %s",
-						response.getResponseCode()));
+			JsonNode jsonNode = _objectMapper.readTree(content);
+
+			JsonNode embeddedJsonNode = jsonNode.get("_embedded");
+
+			List<AnalyticsChannel> analyticsChannels =
+				Collections.emptyList();
+
+			if (embeddedJsonNode != null) {
+				TypeFactory typeFactory = TypeFactory.defaultInstance();
+
+				ObjectReader objectReader = _objectMapper.readerFor(
+					typeFactory.constructCollectionType(
+						ArrayList.class, AnalyticsChannel.class));
+
+				JsonNode embeddedRelJsonNode = embeddedJsonNode.get(
+					"channels");
+
+				analyticsChannels = objectReader.readValue(
+					embeddedRelJsonNode);
 			}
 
-			throw new PortalException("Unable to fetch Channels page");
+			JsonNode pageJsonNode = jsonNode.get("page");
+
+			PageMetadata pageMetadata = _objectMapper.treeToValue(
+				pageJsonNode, PageMetadata.class);
+
+			return new ResultPage<>(analyticsChannels, pageMetadata);
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
