@@ -93,9 +93,10 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 				typeFactory.constructCollectionType(
 					ArrayList.class, AnalyticsChannel.class));
 
-			List<AnalyticsChannel> items = objectReader.readValue(content);
+			List<AnalyticsChannel> analyticsChannels = objectReader.readValue(
+				content);
 
-			return items.get(0);
+			return analyticsChannels.get(0);
 		}
 
 		if (_log.isDebugEnabled()) {
