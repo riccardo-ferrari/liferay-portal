@@ -230,12 +230,12 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 				throw new PortalException("Unable to fetch Channels page");
 			}
 
+			List<AnalyticsChannel> analyticsChannels =
+				Collections.emptyList();
+
 			JsonNode jsonNode = _objectMapper.readTree(content);
 
 			JsonNode embeddedJsonNode = jsonNode.get("_embedded");
-
-			List<AnalyticsChannel> analyticsChannels =
-				Collections.emptyList();
 
 			if (embeddedJsonNode != null) {
 				TypeFactory typeFactory = TypeFactory.defaultInstance();
