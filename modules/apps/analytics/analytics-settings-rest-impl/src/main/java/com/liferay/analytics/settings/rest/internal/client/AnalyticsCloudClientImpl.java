@@ -244,11 +244,8 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 					typeFactory.constructCollectionType(
 						ArrayList.class, AnalyticsChannel.class));
 
-				JsonNode embeddedRelJsonNode = embeddedJsonNode.get(
-					"channels");
-
 				analyticsChannels = objectReader.readValue(
-					embeddedRelJsonNode);
+					embeddedJsonNode.get("channels"));
 			}
 
 			JsonNode pageJsonNode = jsonNode.get("page");
