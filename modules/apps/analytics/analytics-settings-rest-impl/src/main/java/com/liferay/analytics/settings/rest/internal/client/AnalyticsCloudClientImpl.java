@@ -224,7 +224,8 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 
 				JsonNode embeddedJsonNode = jsonNode.get("_embedded");
 
-				List<AnalyticsChannel> items = Collections.emptyList();
+				List<AnalyticsChannel> analyticsChannels =
+					Collections.emptyList();
 
 				if (embeddedJsonNode != null) {
 					TypeFactory typeFactory = TypeFactory.defaultInstance();
@@ -236,7 +237,8 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 					JsonNode embeddedRelJsonNode = embeddedJsonNode.get(
 						"channels");
 
-					items = objectReader.readValue(embeddedRelJsonNode);
+					analyticsChannels = objectReader.readValue(
+						embeddedRelJsonNode);
 				}
 
 				JsonNode pageJsonNode = jsonNode.get("page");
@@ -244,7 +246,7 @@ public class AnalyticsCloudClientImpl implements AnalyticsCloudClient {
 				PageMetadata pageMetadata = _objectMapper.treeToValue(
 					pageJsonNode, PageMetadata.class);
 
-				return new ResultPage<>(items, pageMetadata);
+				return new ResultPage<>(analyticsChannels, pageMetadata);
 			}
 
 			if (_log.isDebugEnabled()) {
