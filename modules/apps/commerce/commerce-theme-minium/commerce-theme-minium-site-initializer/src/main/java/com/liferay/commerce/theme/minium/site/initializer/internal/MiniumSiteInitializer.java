@@ -91,6 +91,10 @@ import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.Settings;
 import com.liferay.portal.kernel.settings.SettingsFactory;
+import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.transaction.TransactionConfig;
+import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -196,13 +200,20 @@ public class MiniumSiteInitializer implements SiteInitializer {
 
 			long catalogGroupId = commerceCatalog.getGroupId();
 
-			CommerceChannel commerceChannel = _createChannel(
-				commerceCatalog, serviceContext);
+			CommerceChannel commerceChannel = TransactionInvokerUtil.invoke(
+				_transactionConfig,
+				() -> {
+					CommerceChannel commerceChannel1 = _createChannel(
+						commerceCatalog, serviceContext);
 
-			_createRoles(
-				serviceContext, commerceChannel.getCommerceChannelId());
+					_createRoles(
+						serviceContext, commerceChannel1.getCommerceChannelId());
 
-			_configureB2BSite(commerceChannel.getGroupId(), serviceContext);
+					_configureB2BSite(commerceChannel1.getGroupId(), serviceContext);
+
+					return commerceChannel1;
+				}
+			);
 
 			_miniumLayoutsInitializer.initialize(serviceContext);
 
@@ -275,6 +286,9 @@ public class MiniumSiteInitializer implements SiteInitializer {
 			_log.error(exception);
 
 			throw new InitializationException(exception);
+		}
+		catch (Throwable throwable) {
+			throw new InitializationException(throwable);
 		}
 	}
 
@@ -1046,6 +1060,10 @@ public class MiniumSiteInitializer implements SiteInitializer {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		MiniumSiteInitializer.class);
+
+	private static final TransactionConfig _transactionConfig =
+		TransactionConfig.Factory.create(
+			Propagation.REQUIRES_NEW, new Class<?>[] {Exception.class});
 
 	@Reference
 	private AccountEntryGroupSettings _accountEntryGroupSettings;
