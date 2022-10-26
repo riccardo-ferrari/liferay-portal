@@ -102,6 +102,8 @@ public class OpenAPIResourceImpl {
 
 			add(CommerceChannelResourceImpl.class);
 
+			add(ContactResourceImpl.class);
+
 			add(DataSourceResourceImpl.class);
 
 			add(SiteResourceImpl.class);
