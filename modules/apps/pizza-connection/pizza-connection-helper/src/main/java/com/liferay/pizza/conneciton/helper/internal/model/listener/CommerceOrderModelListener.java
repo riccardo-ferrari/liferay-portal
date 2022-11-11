@@ -14,15 +14,17 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
+
+import java.io.Serializable;
+
+import java.util.Map;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.io.Serializable;
-import java.util.Map;
-
 @Component(immediate = true, service = ModelListener.class)
-public class CommerceOrderModelListener extends
-	BaseModelListener<CommerceOrder> {
+public class CommerceOrderModelListener
+	extends BaseModelListener<CommerceOrder> {
 
 	@Override
 	public void onAfterCreate(CommerceOrder commerceOrder)
@@ -31,11 +33,12 @@ public class CommerceOrderModelListener extends
 
 	@Override
 	public void onAfterUpdate(
-		CommerceOrder originalModel, CommerceOrder commerceOrder)
+			CommerceOrder originalModel, CommerceOrder commerceOrder)
 		throws ModelListenerException {
 
 		if (commerceOrder.getPaymentStatus() ==
-			CommerceOrderConstants.PAYMENT_STATUS_PAID) {
+				CommerceOrderConstants.PAYMENT_STATUS_PAID) {
+
 			try {
 				CommerceAccount commerceAccount =
 					commerceOrder.getCommerceAccount();
@@ -44,7 +47,7 @@ public class CommerceOrderModelListener extends
 					_objectDefinitionLocalService.fetchSystemObjectDefinition(
 						"AccountEntry");
 
-				if(objectDefinition == null){
+				if (objectDefinition == null) {
 					return;
 				}
 
@@ -53,14 +56,14 @@ public class CommerceOrderModelListener extends
 						commerceAccount.getExternalReferenceCode(),
 						objectDefinition.getObjectDefinitionId());
 
-				if(objectEntry == null){
+				if (objectEntry == null) {
 					return;
 				}
 
 				Map<String, Serializable> values = objectEntry.getValues();
 
-				Integer loyaltyPoints =
-					(Integer) values.getOrDefault("loyaltyPoints", 0);
+				Integer loyaltyPoints = (Integer)values.getOrDefault(
+					"loyaltyPoints", 0);
 
 				long pizzaCount = commerceOrder.getCommerceOrderItems(
 				).stream(
@@ -72,28 +75,28 @@ public class CommerceOrderModelListener extends
 
 				// TODO: Check those are pizzas
 
-				loyaltyPoints += (int) pizzaCount;
+				loyaltyPoints += (int)pizzaCount;
 
 				if (loyaltyPoints > 10) {
-					values.put(
-						"loyaltyPoints", loyaltyPoints - 10);
+					values.put("loyaltyPoints", loyaltyPoints - 10);
 
-					//TODO: Create discount
+					// TODO: Create discount
+
 				}
 				else {
-					values.put(
-						"loyaltyPoints", loyaltyPoints);
+					values.put("loyaltyPoints", loyaltyPoints);
 				}
 
 				values.put(
-					"loyaltyPoints", loyaltyPoints > 10 ? 0: loyaltyPoints - 10);
+					"loyaltyPoints",
+					loyaltyPoints > 10 ? 0 : loyaltyPoints - 10);
 
 				objectEntry.setValues(values);
 
 				_objectEntryLocalService.updateObjectEntry(objectEntry);
 			}
 			catch (PortalException e) {
-				_log.error(e, e);
+				_log.error(e);
 			}
 		}
 	}
@@ -106,4 +109,5 @@ public class CommerceOrderModelListener extends
 
 	@Reference
 	private ObjectEntryLocalService _objectEntryLocalService;
+
 }
