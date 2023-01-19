@@ -15,7 +15,12 @@
 package com.liferay.analytics.settings.rest.internal.util.comparator;
 
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Locale;
 
 /**
  * @author Thiago Buarque
@@ -47,9 +52,19 @@ public class IgnoreCaseOrderByComparator<T> extends OrderByComparator<T> {
 				(columnValue2 instanceof String)) {
 
 				String columnValue1String = (String)columnValue1;
+				String columnValue2String = (String)columnValue2;
+
+				if (Validator.isXml(columnValue1String)) {
+					Locale defaultLocale = LocaleUtil.getDefault();
+
+					columnValue1String = LocalizationUtil.getLocalization(
+						columnValue1String, defaultLocale.getLanguage());
+					columnValue2String = LocalizationUtil.getLocalization(
+						columnValue2String, defaultLocale.getLanguage());
+				}
 
 				value = columnValue1String.compareToIgnoreCase(
-					(String)columnValue2);
+					columnValue2String);
 			}
 			else {
 				Comparable<Object> columnValueComparable1 =
