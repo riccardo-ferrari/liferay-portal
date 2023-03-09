@@ -444,6 +444,12 @@ public class AnalyticsSettingsManagerTest {
 
 				return null;
 			});
+
+		_analyticsSettingsManager.updateCompanyConfiguration(
+			TestPropsValues.getCompanyId(),
+			HashMapBuilder.<String, Object>put(
+				"token", ""
+			).build());
 	}
 
 	private Group _addCommerceChannelGroup() throws Exception {
