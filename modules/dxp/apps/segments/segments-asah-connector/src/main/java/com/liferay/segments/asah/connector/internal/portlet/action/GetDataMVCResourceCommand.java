@@ -109,7 +109,8 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 			long segmentsExperienceId = ParamUtil.getLong(
 				resourceRequest, "segmentsExperienceId");
 
-			_syncExperimentStatus(plid, segmentsExperienceId);
+			Experiment experiment = _fetchAndSynchExperiment(
+				plid, segmentsExperienceId);
 
 			JSONPortletResponseUtil.writeJSON(
 				resourceRequest, resourceResponse,
@@ -121,7 +122,7 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 				).put(
 					"props",
 					_getPropsJSONObject(
-						httpServletRequest, layout,
+						experiment, httpServletRequest, layout,
 						_portal.getLocale(httpServletRequest), redirect,
 						segmentsExperienceId)
 				));
@@ -136,6 +137,43 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 					_language.get(
 						httpServletRequest, "an-unexpected-error-occurred")));
 		}
+	}
+
+	private Experiment _fetchAndSynchExperiment(
+			long plid, long segmentsExperienceId)
+		throws PortalException {
+
+		SegmentsExperiment segmentsExperiment =
+			_segmentsExperimentService.fetchSegmentsExperiment(
+				segmentsExperienceId, plid,
+				SegmentsExperimentConstants.Status.getExclusiveStatusValues());
+
+		if (segmentsExperiment == null) {
+			return null;
+		}
+
+		Experiment experiment = _asahFaroBackendClient.getExperiment(
+			segmentsExperiment.getCompanyId(),
+			segmentsExperiment.getSegmentsExperimentKey());
+
+		ExperimentStatus experimentStatus = experiment.getExperimentStatus();
+
+		SegmentsExperimentConstants.Status status =
+			SegmentsExperimentConstants.Status.parse(experimentStatus.name());
+
+		if (status == null) {
+			return null;
+		}
+
+		if (!Objects.equals(
+				segmentsExperiment.getStatus(), status.getValue())) {
+
+			_segmentsExperimentService.updateSegmentsExperimentStatus(
+				segmentsExperiment.getSegmentsExperimentId(),
+				status.getValue());
+		}
+
+		return experiment;
 	}
 
 	private SegmentsExperiment _fetchSegmentsExperiment(
@@ -283,8 +321,9 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 	}
 
 	private JSONObject _getPropsJSONObject(
-			HttpServletRequest httpServletRequest, Layout layout, Locale locale,
-			String redirect, long segmentsExperienceId)
+			Experiment experiment, HttpServletRequest httpServletRequest,
+			Layout layout, Locale locale, String redirect,
+			long segmentsExperienceId)
 		throws Exception {
 
 		Group group = layout.getGroup();
@@ -354,7 +393,7 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 					segmentsExperimentRel ->
 						SegmentsExperimentUtil.
 							toSegmentsExperimentRelJSONObject(
-								locale, segmentsExperimentRel));
+								experiment, locale, segmentsExperimentRel));
 			}
 		).put(
 			"pathToAssets", _portal.getPathContext(httpServletRequest)
@@ -435,40 +474,6 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 		).setParameter(
 			"p_l_mode", Constants.VIEW
 		).buildString();
-	}
-
-	private void _syncExperimentStatus(long plid, long segmentsExperienceId)
-		throws PortalException {
-
-		SegmentsExperiment segmentsExperiment =
-			_segmentsExperimentService.fetchSegmentsExperiment(
-				segmentsExperienceId, plid,
-				SegmentsExperimentConstants.Status.getExclusiveStatusValues());
-
-		if (segmentsExperiment == null) {
-			return;
-		}
-
-		Experiment experiment = _asahFaroBackendClient.getExperiment(
-			segmentsExperiment.getCompanyId(),
-			segmentsExperiment.getSegmentsExperimentKey());
-
-		ExperimentStatus experimentStatus = experiment.getExperimentStatus();
-
-		SegmentsExperimentConstants.Status status =
-			SegmentsExperimentConstants.Status.parse(experimentStatus.name());
-
-		if (status == null) {
-			return;
-		}
-
-		if (!Objects.equals(
-				segmentsExperiment.getStatus(), status.getValue())) {
-
-			_segmentsExperimentService.updateSegmentsExperimentStatus(
-				segmentsExperiment.getSegmentsExperimentId(),
-				status.getValue());
-		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
