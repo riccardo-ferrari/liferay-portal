@@ -1,0 +1,6 @@
+dependencies {
+	testIntegrationImplementation group: "com.github.ignaciotcrespo", name: "frutilla", version: "0.7.1"
+	testIntegrationImplementation project(":apps:analytics:analytics-machine-learning-api")
+	testIntegrationImplementation project(":apps:portal-search:portal-search-test-util")
+	testIntegrationImplementation project(":test:arquillian-extension-junit-bridge")
+}
