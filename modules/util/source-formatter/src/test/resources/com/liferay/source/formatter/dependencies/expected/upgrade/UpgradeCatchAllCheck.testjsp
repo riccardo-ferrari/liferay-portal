@@ -7,6 +7,8 @@
 
 <%@ page import="com.liferay.commerce.constants.CommerceOrderPaymentConstants" %>
 
+<%@ page import="com.liferay.document.library.util.DLURLHelperUtil" %>
+
 <%
 CommerceOrderPaymentConstants.STATUS_AUTHORIZED;
 CommerceOrderPaymentConstants.STATUS_COMPLETED;
@@ -15,4 +17,6 @@ CommerceOrderPaymentConstants.STATUS_PENDING;
 for (CommerceOrderItem commerceOrderItem : commerceOrder.getCommerceOrderItems()) {
 	commerceOrderItem.getQuantity();
 }
+
+DLURLHelperUtil.getImagePreviewURL(testEntry, test);
 %>

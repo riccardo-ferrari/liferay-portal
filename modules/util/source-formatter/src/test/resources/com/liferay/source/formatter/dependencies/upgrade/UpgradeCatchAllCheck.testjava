@@ -30,6 +30,8 @@ public class UpgradeCatchAllCheck {
 		DestinationNames.STOCK_QUANTITY;
 		DestinationNames.SUBSCRIPTION_STATUS;
 
+		DLUtil.getImagePreviewURL(testEntry, testEntry.getTestVersion(), null);
+
 		FDSTableSchemaBuilder fDSTableSchemaBuilder = _fDSTableSchemaBuilderFactory.create();
 
 		fDSTableSchemaBuilder.addFDSTableSchemaField("test123", "test123");
@@ -99,12 +101,6 @@ public class UpgradeCatchAllCheck {
 		LayoutLocalServiceUtil.addLayout(userId, groupId, privateLayout, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, serviceContext);
 		_layoutLocalService.addLayout(userId, groupId, 123, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, serviceContext);
 		_layoutLocalService.addLayout(userId, groupId, privateLayout, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, serviceContext);
-	}
-
-	public void method(
-		ResourceRequest resourceRequest, ResourceResponse resourceResponse) {
-
-		CaptchaUtil.serveImage(resourceRequest, resourceResponse);
 	}
 
 	public void method(
@@ -274,6 +270,12 @@ public class UpgradeCatchAllCheck {
 	}
 
 	public void method(
+		ResourceRequest resourceRequest, ResourceResponse resourceResponse) {
+
+		CaptchaUtil.serveImage(resourceRequest, resourceResponse);
+	}
+
+	public void method(
 		String className, long classPK, long accountGroupId,
 		ServiceContext serviceContext) {
 
@@ -291,6 +293,13 @@ public class UpgradeCatchAllCheck {
 		CommercePriceEntryLocalServiceUtil.addCommercePriceEntry(externalReferenceCode, cProductId, cpInstanceUuid, commercePriceListId, price, promoPrice, serviceContext);
 		_commercePriceEntryLocalService.addCommercePriceEntry("test123", cProductId, cpInstanceUuid, commercePriceListId, price, promoPrice, serviceContext);
 		_commercePriceEntryLocalService.addCommercePriceEntry(externalReferenceCode, cProductId, cpInstanceUuid, commercePriceListId, price, promoPrice, serviceContext);
+	}
+
+	public void method(
+		Indexer indexer, ServiceReference<Indexer> serviceReference) {
+
+		Map<Indexer, Indexer> indexerRequests = new LinkedHashMap<>();
+		List<Indexer> indexers = portlet.getIndexerInstances();
 	}
 
 	@Reference

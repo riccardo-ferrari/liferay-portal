@@ -4400,6 +4400,7 @@ public class JenkinsResultsParserUtil {
 			}
 		}
 
+		boolean gitHubAPICall = false;
 		int retryCount = 0;
 
 		while (true) {
@@ -4408,8 +4409,24 @@ public class JenkinsResultsParserUtil {
 					System.out.println("Downloading " + url);
 				}
 
+				Matcher matcher = _gitHubAPIURLPattern.matcher(url);
+
+				if (matcher.matches()) {
+					gitHubAPICall = true;
+
+					if (_updatingHttpRequestMethods.contains(
+							httpRequestMethod)) {
+
+						Properties buildProperties = getBuildProperties();
+
+						url =
+							buildProperties.getProperty("github.api.proxy") +
+								matcher.group(1);
+					}
+				}
+
 				if ((httpAuthorizationHeader == null) &&
-					(url.startsWith("https://api.github.com") ||
+					(gitHubAPICall ||
 					 url.startsWith(
 						 "https://raw.githubusercontent.com/liferay/"))) {
 
@@ -4483,18 +4500,6 @@ public class JenkinsResultsParserUtil {
 							buildProperties, "testray.admin.user.name"));
 				}
 
-				Matcher matcher = _gitHubAPIURLPattern.matcher(url);
-
-				if (matcher.matches() &&
-					_updatingHttpRequestMethods.contains(httpRequestMethod)) {
-
-					Properties buildProperties = getBuildProperties();
-
-					url =
-						buildProperties.getProperty("github.api.proxy") +
-							matcher.group(1);
-				}
-
 				URL urlObject = new URL(url);
 
 				URLConnection urlConnection = urlObject.openConnection();
@@ -4514,12 +4519,7 @@ public class JenkinsResultsParserUtil {
 							httpRequestMethod.name());
 					}
 
-					Properties buildProperties = getBuildProperties();
-
-					if ((url.startsWith("https://api.github.com") ||
-						 url.startsWith(
-							 buildProperties.getProperty(
-								 "github.api.proxy"))) &&
+					if (gitHubAPICall &&
 						(httpURLConnection instanceof HttpsURLConnection)) {
 
 						SSLContext sslContext = null;
@@ -4591,12 +4591,7 @@ public class JenkinsResultsParserUtil {
 
 				urlConnection.connect();
 
-				Properties buildProperties = getBuildProperties();
-
-				if (url.startsWith("https://api.github.com") ||
-					url.startsWith(
-						buildProperties.getProperty("github.api.proxy"))) {
-
+				if (gitHubAPICall) {
 					try {
 						int limit = Integer.parseInt(
 							urlConnection.getHeaderField("X-RateLimit-Limit"));

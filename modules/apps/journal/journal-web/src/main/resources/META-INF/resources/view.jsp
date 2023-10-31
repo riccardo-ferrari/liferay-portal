@@ -59,9 +59,9 @@ else {
 	<clay:container-fluid
 		cssClass="container-view sidenav-content"
 	>
-		<c:if test="<%= !journalDisplayContext.isNavigationMine() && !journalDisplayContext.isNavigationRecent() %>">
+		<c:if test="<%= !journalDisplayContext.isNavigationMine() && !journalDisplayContext.isNavigationRecent() && !journalDisplayContext.isSearch() %>">
 			<liferay-site-navigation:breadcrumb
-				breadcrumbEntries="<%= JournalPortletUtil.getPortletBreadcrumbEntries(journalDisplayContext.getFolder(), request, journalDisplayContext.getPortletURL(null)) %>"
+				breadcrumbEntries="<%= JournalPortletUtil.getPortletBreadcrumbEntries(journalDisplayContext.getFolder(), request, false, liferayPortletResponse) %>"
 			/>
 		</c:if>
 

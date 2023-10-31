@@ -15,6 +15,8 @@ import com.liferay.portal.kernel.util.HtmlParser;
 
 import com.liferay.portal.kernel.search.Sort;
 
+import com.liferay.document.library.util.DLURLHelperUtil;
+
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -39,6 +41,8 @@ public class UpgradeCatchAllCheck {
 		DestinationNames.COMMERCE_SHIPMENT_STATUS;
 		DestinationNames.COMMERCE_STOCK_QUANTITY;
 		DestinationNames.COMMERCE_SUBSCRIPTION_STATUS;
+
+		DLURLHelperUtil.getImagePreviewURL(testEntry, testEntry.getTestVersion(), null);
 
 		FDSTableSchemaBuilder fDSTableSchemaBuilder = _fDSTableSchemaBuilderFactory.create();
 
@@ -109,12 +113,6 @@ public class UpgradeCatchAllCheck {
 		LayoutLocalServiceUtil.addLayout(userId, groupId, privateLayout, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, 0, serviceContext);
 		_layoutLocalService.addLayout(userId, groupId, 123, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, serviceContext);
 		_layoutLocalService.addLayout(userId, groupId, privateLayout, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, 0, serviceContext);
-	}
-
-	public void method(
-		ResourceRequest resourceRequest, ResourceResponse resourceResponse) {
-
-		CaptchaUtil.serveImage(PortalUtil.getHttpServletRequest(resourceRequest), PortalUtil.getHttpServletResponse(resourceResponse));
 	}
 
 	public void method(
@@ -284,6 +282,12 @@ public class UpgradeCatchAllCheck {
 	}
 
 	public void method(
+		ResourceRequest resourceRequest, ResourceResponse resourceResponse) {
+
+		CaptchaUtil.serveImage(PortalUtil.getHttpServletRequest(resourceRequest), PortalUtil.getHttpServletResponse(resourceResponse));
+	}
+
+	public void method(
 		String className, long classPK, long accountGroupId,
 		ServiceContext serviceContext) {
 
@@ -301,6 +305,13 @@ public class UpgradeCatchAllCheck {
 		CommercePriceEntryLocalServiceUtil.addCommercePriceEntry(externalReferenceCode, cProductId, cpInstanceUuid, commercePriceListId, price, false, promoPrice, null, serviceContext);
 		_commercePriceEntryLocalService.addCommercePriceEntry("test123", cProductId, cpInstanceUuid, commercePriceListId, price, promoPrice, serviceContext);
 		_commercePriceEntryLocalService.addCommercePriceEntry(externalReferenceCode, cProductId, cpInstanceUuid, commercePriceListId, price, false, promoPrice, null, serviceContext);
+	}
+
+	public void method(
+		Indexer<?> indexer, ServiceReference<Indexer<?>> serviceReference) {
+
+		Map<Indexer<?>, Indexer<?>> indexerRequests = new LinkedHashMap<>();
+		List<Indexer<?>> indexers = portlet.getIndexerInstances();
 	}
 
 	@Reference

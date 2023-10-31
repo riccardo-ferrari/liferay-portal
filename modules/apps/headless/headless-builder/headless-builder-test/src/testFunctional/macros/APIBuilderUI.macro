@@ -1,6 +1,26 @@
 definition {
 
 	@summary = "Default summary"
+	macro addAndPublishFiltersAndSortingInEndpointConfiguration(name = null,entity = null,fieldName = null,title = null,unpublish = null) {
+		Variables.assertDefined(parameterList = "${name},${entity},${fieldName},${title},${editValue}");
+
+		APIBuilderUI.goToEditRelatedEntryInEditApplication(
+			entity = ${entity},
+			name = ${name},
+			tabEntity = "Configuration",
+			title = ${title});
+
+		Type(
+			fieldName = ${fieldName},
+			locator1 = "APIBuilder#ODATA_TEXTAREA",
+			value1 = ${editValue});
+
+		Click(locator1 = "APIBuilder#PUBLISH_BUTTON");
+
+		Alert.viewSuccessMessage();
+	}
+
+	@summary = "Default summary"
 	macro assertSortedStatusInOrder(statusList = null) {
 		Variables.assertDefined(parameterList = ${statusList});
 
@@ -35,7 +55,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro createAPIApplication(baseURL = null,description = null,title = null) {
+	macro createAPIApplication(baseURL = null, description = null, title = null) {
 		Variables.assertDefined(parameterList = ${title});
 
 		ApplicationsMenu.gotoPortlet(
@@ -72,7 +92,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro createAPIEndpoint(path = null,name = null,applicationId = null) {
+	macro createAPIEndpoint(path = null, name = null, applicationId = null) {
 		Variables.assertDefined(parameterList = "${name},${path}");
 
 		Click(locator1 = "Button#PLUS");
@@ -102,7 +122,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro createAPISchema(objectDefinitionName = null,name = null) {
+	macro createAPISchema(objectDefinitionName = null, name = null) {
 		Variables.assertDefined(parameterList = "${name},${objectDefinitionName}");
 
 		Click(locator1 = "APIBuilder#ADD_NEW_SCHEMA");
@@ -137,7 +157,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro deleteAPIEndpoint(endpointPath = null,applicationTitle = null) {
+	macro deleteAPIEndpoint(endpointPath = null, applicationTitle = null) {
 		APIBuilderUI.switchToRelatedEntryInEditApplication(
 			entity = "Endpoints",
 			title = ${applicationTitle});
@@ -154,7 +174,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro deleteAPISchema(applicationTitle = null,schemaName = null) {
+	macro deleteAPISchema(applicationTitle = null, schemaName = null) {
 		APIBuilderUI.switchToRelatedEntryInEditApplication(
 			entity = "Schemas",
 			title = ${applicationTitle});
@@ -171,7 +191,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro filterByLastUpdated(fromDate = null,toDate = null) {
+	macro filterByLastUpdated(fromDate = null, toDate = null) {
 		Variables.assertDefined(parameterList = "${fromDate},${toDate}");
 
 		Click.pauseClickAt(locator1 = "Dropdown#FILTER");
@@ -227,6 +247,23 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro goToEditRelatedEntryInEditApplication(name = null,entity = null,title = null,tabEntity = null) {
+		Variables.assertDefined(parameterList = "${name},${entity},${title},${tabEntity}");
+
+		APIBuilderUI.switchToRelatedEntryInEditApplication(
+			entity = ${entity},
+			title = ${title});
+
+		Click(
+			locator1 = "Button#BUTTON_WITH_VALUE",
+			value = "/${name}/");
+
+		Click(
+			locator1 = "Button#BUTTON_WITH_VALUE",
+			value = ${tabEntity});
+	}
+
+	@summary = "Default summary"
 	macro publishApplication(key_title = null) {
 		APIBuilderUI.goToEditAPIApplicationPage(key_title = ${key_title});
 
@@ -262,7 +299,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro switchToRelatedEntryInEditApplication(title = null,entity = null) {
+	macro switchToRelatedEntryInEditApplication(title = null, entity = null) {
 		Variables.assertDefined(parameterList = "${entity},${title}");
 
 		APIBuilderUI.goToEditAPIApplicationPage(key_title = ${title});

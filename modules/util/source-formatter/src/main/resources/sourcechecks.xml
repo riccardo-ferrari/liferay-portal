@@ -1613,10 +1613,6 @@
 			<category name="Upgrade" />
 			<description name="Replace the getGroupIds method of class `DLUtil` by getCurrentAndAncestorSiteGroupIds of class `PortalUtil`." />
 		</check>
-		<check name="UpgradeGetImagePreviewURLMethodCheck">
-			<category name="Upgrade" />
-			<description name="Replaces the references of the method 'DLUtil.getImagePreviewURL' with the method 'getImagePreviewURL' of 'DLURLHelper' class" />
-		</check>
 		<check name="UpgradeGetPortletGroupIdMethodCheck">
 			<category name="Upgrade" />
 			<description name="Run code migration of the method 'getPortletGroupId' to 'getScopeGroupId'" />
@@ -1701,10 +1697,6 @@
 			<description name="Replace getLayoutDisplayPageProvider by getLayoutDisplayPageProviderByClassName" />
 			<weight>2</weight>
 		</check>
-		<check name="UpgradeJavaIndexerCheck">
-			<category name="Upgrade" />
-			<description name="Replace Indexer by Indexer&lt;?&gt;" />
-		</check>
 		<check name="UpgradeJavaLanguageUtilCheck">
 			<category name="Upgrade" />
 			<description name="Replace `ListUtil.fromArray` by `new ArrayList' when the parameter is to 'LanguageUtil.getAvailableLocales'" />
@@ -1733,6 +1725,10 @@
 			<category name="Upgrade" />
 			<description name="Replace the number of generic type arguments in ServiceTrackerList" />
 		</check>
+		<check name="UpgradeJavaStorageTypeAwareCheck">
+			<category name="Upgrade" />
+			<description name="Run code to delete StorageTypeAware interface" />
+		</check>
 		<check name="UpgradeJavaUpdateCommerceAddressCheck">
 			<category name="Upgrade" />
 			<description name="Replace parameter in updateCommerceAddress method by other parameters list" />
@@ -1760,10 +1756,6 @@
 		<check name="UpgradeRejectedExecutionHandlerCheck">
 			<category name="Upgrade" />
 			<description name="Replace Liferay's RejectedExecutionHandler with Java's RejectedExecutionHandler" />
-		</check>
-		<check name="UpgradeSCSSImportsCheck">
-			<category name="Upgrade" />
-			<description name="Replace compat/mixins by clay/cadmin-variables" />
 		</check>
 		<check name="UpgradeSCSSMixinsCheck">
 			<category name="Upgrade" />
