@@ -16,11 +16,11 @@ DLFileEntryConfigurationDisplayContext dlFileEntryConfigurationDisplayContext = 
 		<liferay-ui:error exception="<%= ConfigurationModelListenerException.class %>" message="there-was-an-unknown-error" />
 
 		<liferay-ui:error exception="<%= DLFileEntryConfigurationException.InvalidPreviewableProcessorMaxSizeException.class %>">
-			<liferay-ui:message key="maximum-file-size-limit-is-not-valid" />
+			<liferay-ui:message key="maximum-file-size-limit-is-invalid" />
 		</liferay-ui:error>
 
 		<liferay-ui:error exception="<%= DLFileEntryConfigurationException.InvalidMaxNumberOfPagesException.class %>">
-			<liferay-ui:message key="maximum-number-of-pages-limit-is-not-valid" />
+			<liferay-ui:message key="maximum-number-of-pages-limit-is-invalid" />
 		</liferay-ui:error>
 
 		<clay:sheet-header>
