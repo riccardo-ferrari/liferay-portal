@@ -58,13 +58,11 @@ public class DLFileEntryConfigurationProviderTest {
 							_dlFileEntryConfigurationProvider.
 								getCompanyMaxNumberOfPages(
 									TestPropsValues.getCompanyId()));
-
 						Assert.assertEquals(
 							1000,
 							_dlFileEntryConfigurationProvider.
 								getCompanyPreviewableProcessorMaxSize(
 									TestPropsValues.getCompanyId()));
-
 						Assert.assertEquals(
 							10,
 							_dlFileEntryConfigurationProvider.
@@ -97,25 +95,11 @@ public class DLFileEntryConfigurationProviderTest {
 									ExtendedObjectClassDefinition.Scope.COMPANY,
 									TestPropsValues.getCompanyId()));
 						Assert.assertEquals(
-							1000,
-							_dlFileEntryConfigurationProvider.
-								getPreviewableProcessorMaxSizeLimit(
-									ExtendedObjectClassDefinition.Scope.COMPANY,
-									TestPropsValues.getCompanyId()));
-
-						Assert.assertEquals(
 							5,
 							_dlFileEntryConfigurationProvider.
 								getMaxNumberOfPagesLimit(
 									ExtendedObjectClassDefinition.Scope.GROUP,
 									TestPropsValues.getGroupId()));
-						Assert.assertEquals(
-							100,
-							_dlFileEntryConfigurationProvider.
-								getPreviewableProcessorMaxSizeLimit(
-									ExtendedObjectClassDefinition.Scope.GROUP,
-									TestPropsValues.getGroupId()));
-
 						Assert.assertEquals(
 							DLFileEntryConfigurationConstants.
 								MAX_NUMBER_OF_PAGES_UNLIMITED,
@@ -123,6 +107,18 @@ public class DLFileEntryConfigurationProviderTest {
 								getMaxNumberOfPagesLimit(
 									ExtendedObjectClassDefinition.Scope.SYSTEM,
 									0L));
+						Assert.assertEquals(
+							1000,
+							_dlFileEntryConfigurationProvider.
+								getPreviewableProcessorMaxSizeLimit(
+									ExtendedObjectClassDefinition.Scope.COMPANY,
+									TestPropsValues.getCompanyId()));
+						Assert.assertEquals(
+							100,
+							_dlFileEntryConfigurationProvider.
+								getPreviewableProcessorMaxSizeLimit(
+									ExtendedObjectClassDefinition.Scope.GROUP,
+									TestPropsValues.getGroupId()));
 						Assert.assertEquals(
 							DLFileEntryConfigurationConstants.
 								PREVIEWABLE_PROCESSOR_MAX_SIZE_UNLIMITED,
@@ -155,7 +151,6 @@ public class DLFileEntryConfigurationProviderTest {
 							_dlFileEntryConfigurationProvider.
 								getCompanyPreviewableProcessorMaxSize(
 									TestPropsValues.getCompanyId()));
-
 						Assert.assertEquals(
 							2,
 							_dlFileEntryConfigurationProvider.
@@ -166,7 +161,6 @@ public class DLFileEntryConfigurationProviderTest {
 							_dlFileEntryConfigurationProvider.
 								getGroupPreviewableProcessorMaxSize(
 									TestPropsValues.getGroupId()));
-
 						Assert.assertEquals(
 							10,
 							_dlFileEntryConfigurationProvider.

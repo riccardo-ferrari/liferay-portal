@@ -143,12 +143,8 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				upgradeProcess.upgrade();
 			}
 
-			_assertConfigurationValuesEquals(
-				_getDLFileEntryConfiguration(
-					ExtendedObjectClassDefinition.Scope.SYSTEM),
-				10,
-				DLFileEntryConfigurationConstants.
-					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT * 2);
+			Assert.assertNull(
+				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
 			_assertConfigurationValuesEquals(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.COMPANY),
@@ -161,9 +157,12 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				6,
 				DLFileEntryConfigurationConstants.
 					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT * 2);
-
-			Assert.assertNull(
-				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
+			_assertConfigurationValuesEquals(
+				_getDLFileEntryConfiguration(
+					ExtendedObjectClassDefinition.Scope.SYSTEM),
+				10,
+				DLFileEntryConfigurationConstants.
+					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT * 2);
 		}
 		finally {
 			_deleteConfigurations(_CLASS_NAME_DL_FILE_ENTRY_CONFIGURATION);
@@ -217,10 +216,8 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				upgradeProcess.upgrade();
 			}
 
-			_assertConfigurationValuesEquals(
-				_getDLFileEntryConfiguration(
-					ExtendedObjectClassDefinition.Scope.SYSTEM),
-				10, 1000L);
+			Assert.assertNull(
+				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
 			_assertConfigurationValuesEquals(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.COMPANY),
@@ -233,7 +230,10 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				6,
 				DLFileEntryConfigurationConstants.
 					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT);
-
+			_assertConfigurationValuesEquals(
+				_getDLFileEntryConfiguration(
+					ExtendedObjectClassDefinition.Scope.SYSTEM),
+				10, 1000L);
 			_assertConfigurationValuesEquals(
 				_getScopedConfiguration(
 					_CLASS_NAME_DL_FILE_ENTRY_CONFIGURATION,
@@ -241,7 +241,6 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				7,
 				DLFileEntryConfigurationConstants.
 					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT);
-
 			_assertConfigurationValuesEquals(
 				_getScopedConfiguration(
 					_CLASS_NAME_DL_FILE_ENTRY_CONFIGURATION,
@@ -249,9 +248,6 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				5,
 				DLFileEntryConfigurationConstants.
 					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT);
-
-			Assert.assertNull(
-				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
 		}
 		finally {
 			_deleteConfigurations(_CLASS_NAME_DL_FILE_ENTRY_CONFIGURATION);
@@ -278,8 +274,7 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 			}
 
 			Assert.assertNull(
-				_getDLFileEntryConfiguration(
-					ExtendedObjectClassDefinition.Scope.SYSTEM));
+				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
 			_assertConfigurationValuesEquals(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.COMPANY),
@@ -289,9 +284,9 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 			Assert.assertNull(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.GROUP));
-
 			Assert.assertNull(
-				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
+				_getDLFileEntryConfiguration(
+					ExtendedObjectClassDefinition.Scope.SYSTEM));
 		}
 		finally {
 			_deleteConfigurations(_CLASS_NAME_DL_FILE_ENTRY_CONFIGURATION);
@@ -318,8 +313,7 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 			}
 
 			Assert.assertNull(
-				_getDLFileEntryConfiguration(
-					ExtendedObjectClassDefinition.Scope.SYSTEM));
+				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
 			Assert.assertNull(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.COMPANY));
@@ -329,9 +323,9 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				6,
 				DLFileEntryConfigurationConstants.
 					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT);
-
 			Assert.assertNull(
-				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
+				_getDLFileEntryConfiguration(
+					ExtendedObjectClassDefinition.Scope.SYSTEM));
 		}
 		finally {
 			_deleteConfigurations(_CLASS_NAME_DL_FILE_ENTRY_CONFIGURATION);
@@ -350,17 +344,16 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 		}
 
 		Assert.assertNull(
-			_getDLFileEntryConfiguration(
-				ExtendedObjectClassDefinition.Scope.SYSTEM));
+			_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
 		Assert.assertNull(
 			_getDLFileEntryConfiguration(
 				ExtendedObjectClassDefinition.Scope.COMPANY));
 		Assert.assertNull(
 			_getDLFileEntryConfiguration(
 				ExtendedObjectClassDefinition.Scope.GROUP));
-
 		Assert.assertNull(
-			_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
+			_getDLFileEntryConfiguration(
+				ExtendedObjectClassDefinition.Scope.SYSTEM));
 	}
 
 	@Test
@@ -380,20 +373,19 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				upgradeProcess.upgrade();
 			}
 
-			_assertConfigurationValuesEquals(
-				_getDLFileEntryConfiguration(
-					ExtendedObjectClassDefinition.Scope.SYSTEM),
-				DLFileEntryConfigurationConstants.MAX_NUMBER_OF_PAGES_DEFAULT,
-				1000L);
+			Assert.assertNull(
+				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
 			Assert.assertNull(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.COMPANY));
 			Assert.assertNull(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.GROUP));
-
-			Assert.assertNull(
-				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
+			_assertConfigurationValuesEquals(
+				_getDLFileEntryConfiguration(
+					ExtendedObjectClassDefinition.Scope.SYSTEM),
+				DLFileEntryConfigurationConstants.MAX_NUMBER_OF_PAGES_DEFAULT,
+				1000L);
 		}
 		finally {
 			_deleteConfigurations(_CLASS_NAME_DL_FILE_ENTRY_CONFIGURATION);
@@ -417,21 +409,20 @@ public class DLFileEntryConfigurationUpgradeProcessTest {
 				upgradeProcess.upgrade();
 			}
 
-			_assertConfigurationValuesEquals(
-				_getDLFileEntryConfiguration(
-					ExtendedObjectClassDefinition.Scope.SYSTEM),
-				10,
-				DLFileEntryConfigurationConstants.
-					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT);
+			Assert.assertNull(
+				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
 			Assert.assertNull(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.COMPANY));
 			Assert.assertNull(
 				_getDLFileEntryConfiguration(
 					ExtendedObjectClassDefinition.Scope.GROUP));
-
-			Assert.assertNull(
-				_getConfigurations(_CLASS_NAME_PDF_PREVIEW_CONFIGURATION));
+			_assertConfigurationValuesEquals(
+				_getDLFileEntryConfiguration(
+					ExtendedObjectClassDefinition.Scope.SYSTEM),
+				10,
+				DLFileEntryConfigurationConstants.
+					PREVIEWABLE_PROCESSOR_MAX_SIZE_DEFAULT);
 		}
 		finally {
 			_deleteConfigurations(_CLASS_NAME_DL_FILE_ENTRY_CONFIGURATION);
