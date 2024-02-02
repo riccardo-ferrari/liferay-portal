@@ -19,6 +19,9 @@ pipeline {
 		stage("Build") {
 			steps {
 				sh "ant setup-sdk"
+				sh 'mkdir ~/.ssh'
+				sh 'touch ~/.ssh/known_hosts'
+				sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
 				sh "ant setup-profile-dxp"
                 sh "ant compile install-portal-snapshots"
                 sh "cd modules/dxp/apps/osb/osb-faro"
