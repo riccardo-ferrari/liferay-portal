@@ -24,7 +24,7 @@ pipeline {
 					sh 'touch ~/.ssh/known_hosts'
 					sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
 					sh 'eval "$(ssh-agent -s)"'
-					sh 'touch ~/.ssh/id_ed25519'
+					sh "echo ${SECRET} > ~/.ssh/id_ed25519"
 					sh 'echo "ssh private key: $SECRET"'
 					sh 'echo $SECRET > ~/.ssh/id_ed25519'
 					sh 'ssh-add ~/.ssh/id_ed25519'
