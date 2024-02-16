@@ -18,14 +18,20 @@ pipeline {
 	stages {
 		stage("Build") {
 			steps {
-				sh "ant setup-sdk"
-				sh 'mkdir ~/.ssh'
-				sh 'touch ~/.ssh/known_hosts'
-				sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
-				sh "ant setup-profile-dxp"
-                sh "ant compile install-portal-snapshots"
-                sh "cd modules/dxp/apps/osb/osb-faro"
-                sh "../../../../../gradlew copyCloudResources"
+				withCredentials([[$class: 'StringBinding', credentialsId: 'analytics_cloud_ci_ssh', variable: 'SECRET']]) {
+					sh 'ant setup-sdk'
+					sh 'mkdir ~/.ssh'
+					sh 'touch ~/.ssh/known_hosts'
+					sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
+					sh 'eval "$(ssh-agent -s)"'
+					sh 'touch ~/.ssh/id_ed25519'
+					sh 'echo $SECRET > ~/.ssh/id_ed25519'
+					sh 'ssh-add ~/.ssh/id_ed25519'
+					sh 'ant setup-profile-dxp'
+					sh 'ant compile install-portal-snapshots'
+					sh 'cd modules/dxp/apps/osb/osb-faro'
+					sh '../../../../../gradlew copyCloudResources'
+                }
 			}
 		}
 
