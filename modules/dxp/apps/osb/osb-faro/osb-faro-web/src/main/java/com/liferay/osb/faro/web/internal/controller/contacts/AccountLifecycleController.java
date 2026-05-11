@@ -45,8 +45,8 @@ public class AccountLifecycleController extends BaseFaroController {
 		throws Exception {
 
 		return contactsEngineClient.addAccountLifecycle(
-			faroProjectLocalService.getFaroProjectByGroupId(groupId), description,
-			name, segmentId);
+			faroProjectLocalService.getFaroProjectByGroupId(groupId),
+			description, name, segmentId);
 	}
 
 	@GET
@@ -98,8 +98,8 @@ public class AccountLifecycleController extends BaseFaroController {
 			id, industry);
 	}
 
-	@PUT
 	@Path("/{id}")
+	@PUT
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	public AccountLifecycle updateAccountLifecycle(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
@@ -113,8 +113,8 @@ public class AccountLifecycleController extends BaseFaroController {
 			description, name, segmentId);
 	}
 
-	@PUT
 	@Path("/{id}/stages/{stageId}/rules")
+	@PUT
 	@RolesAllowed(RoleConstants.SITE_MEMBER)
 	public void updateAccountLifecycleStageRules(
 			@PathParam("groupId") long groupId, @PathParam("id") String id,
@@ -125,8 +125,8 @@ public class AccountLifecycleController extends BaseFaroController {
 		throws Exception {
 
 		contactsEngineClient.updateAccountLifecycleStageRules(
-			faroProjectLocalService.getFaroProjectByGroupId(groupId), id, stageId,
-			filterMetadata, filterString, name);
+			faroProjectLocalService.getFaroProjectByGroupId(groupId), id,
+			stageId, filterMetadata, filterString, name);
 	}
 
 }

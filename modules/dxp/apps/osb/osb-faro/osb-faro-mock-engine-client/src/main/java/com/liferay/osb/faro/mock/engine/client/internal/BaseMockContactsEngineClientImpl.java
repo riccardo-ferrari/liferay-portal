@@ -76,6 +76,15 @@ public abstract class BaseMockContactsEngineClientImpl
 	extends BaseEngineClient implements ContactsEngineClient {
 
 	@Override
+	public AccountLifecycle addAccountLifecycle(
+		FaroProject faroProject, String description, String name,
+		String segmentId) {
+
+		return contactsEngineClient.addAccountLifecycle(
+			faroProject, description, name, segmentId);
+	}
+
+	@Override
 	public Results<BlockedKeyword> addBlockedKeywords(
 		FaroProject faroProject, List<String> keywords) {
 
@@ -146,15 +155,6 @@ public abstract class BaseMockContactsEngineClientImpl
 
 		return contactsEngineClient.addFieldMappings(
 			faroProject, dataSourceId, context, ownerType, fieldMappingMaps);
-	}
-
-	@Override
-	public AccountLifecycle addAccountLifecycle(
-		FaroProject faroProject, String description, String name,
-		String segmentId) {
-
-		return contactsEngineClient.addAccountLifecycle(
-			faroProject, description, name, segmentId);
 	}
 
 	@Override

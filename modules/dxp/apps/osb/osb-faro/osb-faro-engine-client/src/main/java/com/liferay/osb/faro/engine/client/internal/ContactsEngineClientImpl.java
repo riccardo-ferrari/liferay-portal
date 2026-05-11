@@ -127,6 +127,22 @@ public class ContactsEngineClientImpl
 	extends BaseEngineClient implements ContactsEngineClient {
 
 	@Override
+	public AccountLifecycle addAccountLifecycle(
+		FaroProject faroProject, String description, String name,
+		String segmentId) {
+
+		AccountLifecycle accountLifecycle = new AccountLifecycle();
+
+		accountLifecycle.setDescription(description);
+		accountLifecycle.setName(name);
+		accountLifecycle.setSegmentId(segmentId);
+
+		return post(
+			faroProject, Rels.ACCOUNT_LIFECYCLES, accountLifecycle,
+			AccountLifecycle.class);
+	}
+
+	@Override
 	public Results<BlockedKeyword> addBlockedKeywords(
 		FaroProject faroProject, List<String> keywords) {
 
@@ -302,22 +318,6 @@ public class ContactsEngineClientImpl
 			new TypeReference<FieldMapping>() {
 			},
 			uriVariablesList);
-	}
-
-	@Override
-	public AccountLifecycle addAccountLifecycle(
-		FaroProject faroProject, String description, String name,
-		String segmentId) {
-
-		AccountLifecycle accountLifecycle = new AccountLifecycle();
-
-		accountLifecycle.setDescription(description);
-		accountLifecycle.setName(name);
-		accountLifecycle.setSegmentId(segmentId);
-
-		return post(
-			faroProject, Rels.ACCOUNT_LIFECYCLES, accountLifecycle,
-			AccountLifecycle.class);
 	}
 
 	@Override
@@ -752,7 +752,8 @@ public class ContactsEngineClientImpl
 
 		return get(
 			faroProject, Rels.ACCOUNT_LIFECYCLE_STAGES,
-			new ParameterizedTypeReference<List<AccountLifecycleStageMetric>>() {
+			new ParameterizedTypeReference
+				<List<AccountLifecycleStageMetric>>() {
 			},
 			uriVariables);
 	}
