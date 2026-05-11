@@ -8,6 +8,7 @@ package com.liferay.osb.faro.engine.client;
 import com.liferay.osb.faro.engine.client.exception.FaroEngineClientException;
 import com.liferay.osb.faro.engine.client.model.Account;
 import com.liferay.osb.faro.engine.client.model.AccountDetails;
+import com.liferay.osb.faro.engine.client.model.AccountLifecycle;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleMetric;
 import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Activity;
@@ -68,6 +69,10 @@ import java.util.Map;
  * @author Shinn Lok
  */
 public interface ContactsEngineClient {
+
+	public AccountLifecycle addAccountLifecycle(
+		FaroProject faroProject, String description, String name,
+		String segmentId);
 
 	public Results<BlockedKeyword> addBlockedKeywords(
 		FaroProject faroProject, List<String> keywords);
@@ -183,9 +188,16 @@ public interface ContactsEngineClient {
 		String query, String status, int cur, int delta,
 		List<OrderByField> orderByFields);
 
+	public AccountLifecycle getAccountLifecycle(
+			FaroProject faroProject, String id)
+		throws FaroEngineClientException;
+
 	public List<AccountLifecycleMetric> getAccountLifecycleMetrics(
 			FaroProject faroProject, String country, String id, String industry,
 			String revenue)
+		throws FaroEngineClientException;
+
+	public List<AccountLifecycle> getAccountLifecycles(FaroProject faroProject)
 		throws FaroEngineClientException;
 
 	public List<AccountMetric> getAccountMetrics(
@@ -573,6 +585,14 @@ public interface ContactsEngineClient {
 	public List<Map<String, Object>> refreshLiferay(FaroProject faroProject);
 
 	public void setEngineURL(String engineURL);
+
+	public AccountLifecycle updateAccountLifecycle(
+		FaroProject faroProject, String id, String description, String name,
+		String segmentId);
+
+	public void updateAccountLifecycleStageRules(
+		FaroProject faroProject, String id, String stageId,
+		String filterMetadata, String filterString, String name);
 
 	public void updateBQProject(FaroProject faroProject, Date startDate)
 		throws Exception;
