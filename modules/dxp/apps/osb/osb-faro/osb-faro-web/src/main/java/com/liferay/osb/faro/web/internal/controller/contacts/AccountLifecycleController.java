@@ -7,6 +7,7 @@ package com.liferay.osb.faro.web.internal.controller.contacts;
 
 import com.liferay.osb.faro.engine.client.model.AccountLifecycle;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleMetric;
+import com.liferay.osb.faro.engine.client.model.AccountLifecycleStageMetric;
 import com.liferay.osb.faro.web.internal.controller.BaseFaroController;
 import com.liferay.portal.kernel.model.RoleConstants;
 
@@ -82,6 +83,20 @@ public class AccountLifecycleController extends BaseFaroController {
 
 		return contactsEngineClient.getAccountLifecycles(
 			faroProjectLocalService.getFaroProjectByGroupId(groupId));
+	}
+
+	@GET
+	@Path("/{id}/stages")
+	@RolesAllowed(RoleConstants.SITE_MEMBER)
+	public List<AccountLifecycleStageMetric> getAccountLifecycleStageMetrics(
+			@PathParam("groupId") long groupId, @PathParam("id") String id,
+			@QueryParam("country") String country,
+			@QueryParam("industry") String industry)
+		throws Exception {
+
+		return contactsEngineClient.getAccountLifecycleStageMetrics(
+			faroProjectLocalService.getFaroProjectByGroupId(groupId), country,
+			id, industry);
 	}
 
 	@PUT
