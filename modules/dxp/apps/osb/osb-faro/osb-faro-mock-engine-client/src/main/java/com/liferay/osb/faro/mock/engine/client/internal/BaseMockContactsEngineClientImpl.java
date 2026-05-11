@@ -10,6 +10,7 @@ import com.liferay.osb.faro.engine.client.ContactsEngineClient;
 import com.liferay.osb.faro.engine.client.exception.FaroEngineClientException;
 import com.liferay.osb.faro.engine.client.model.Account;
 import com.liferay.osb.faro.engine.client.model.AccountDetails;
+import com.liferay.osb.faro.engine.client.model.AccountLifecycle;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleMetric;
 import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Activity;
@@ -144,6 +145,15 @@ public abstract class BaseMockContactsEngineClientImpl
 
 		return contactsEngineClient.addFieldMappings(
 			faroProject, dataSourceId, context, ownerType, fieldMappingMaps);
+	}
+
+	@Override
+	public AccountLifecycle addAccountLifecycle(
+		FaroProject faroProject, String description, String name,
+		String segmentId) {
+
+		return contactsEngineClient.addAccountLifecycle(
+			faroProject, description, name, segmentId);
 	}
 
 	@Override
@@ -336,6 +346,14 @@ public abstract class BaseMockContactsEngineClientImpl
 	}
 
 	@Override
+	public AccountLifecycle getAccountLifecycle(
+			FaroProject faroProject, String id)
+		throws FaroEngineClientException {
+
+		return contactsEngineClient.getAccountLifecycle(faroProject, id);
+	}
+
+	@Override
 	public List<AccountLifecycleMetric> getAccountLifecycleMetrics(
 			FaroProject faroProject, String country, String id, String industry,
 			String revenue)
@@ -343,6 +361,13 @@ public abstract class BaseMockContactsEngineClientImpl
 
 		return contactsEngineClient.getAccountLifecycleMetrics(
 			faroProject, country, id, industry, revenue);
+	}
+
+	@Override
+	public List<AccountLifecycle> getAccountLifecycles(FaroProject faroProject)
+		throws FaroEngineClientException {
+
+		return contactsEngineClient.getAccountLifecycles(faroProject);
 	}
 
 	@Override
@@ -1181,6 +1206,24 @@ public abstract class BaseMockContactsEngineClientImpl
 		super.setEngineURL(engineURL);
 
 		contactsEngineClient.setEngineURL(engineURL);
+	}
+
+	@Override
+	public AccountLifecycle updateAccountLifecycle(
+		FaroProject faroProject, String id, String description, String name,
+		String segmentId) {
+
+		return contactsEngineClient.updateAccountLifecycle(
+			faroProject, id, description, name, segmentId);
+	}
+
+	@Override
+	public void updateAccountLifecycleStageRules(
+		FaroProject faroProject, String id, String stageId,
+		String filterMetadata, String filterString, String name) {
+
+		contactsEngineClient.updateAccountLifecycleStageRules(
+			faroProject, id, stageId, filterMetadata, filterString, name);
 	}
 
 	@Override
