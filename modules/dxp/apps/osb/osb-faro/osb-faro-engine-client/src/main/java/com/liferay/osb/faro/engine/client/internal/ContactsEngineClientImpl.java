@@ -19,6 +19,7 @@ import com.liferay.osb.faro.engine.client.model.AccountDetails;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycle;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleMetric;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleSegment;
+import com.liferay.osb.faro.engine.client.model.AccountLifecycleStageMetric;
 import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.Activity;
 import com.liferay.osb.faro.engine.client.model.ActivityAggregation;
@@ -735,6 +736,30 @@ public class ContactsEngineClientImpl
 			new ParameterizedTypeReference<List<AccountLifecycle>>() {
 			},
 			getUriVariables(faroProject));
+	}
+
+	@Override
+	public List<AccountLifecycleStageMetric> getAccountLifecycleStageMetrics(
+			FaroProject faroProject, String country, String id, String industry)
+		throws FaroEngineClientException {
+
+		Map<String, Object> uriVariables = getUriVariables(faroProject);
+
+		if (Validator.isNotNull(country)) {
+			uriVariables.put("country", country);
+		}
+
+		uriVariables.put("id", id);
+
+		if (Validator.isNotNull(industry)) {
+			uriVariables.put("industry", industry);
+		}
+
+		return get(
+			faroProject, Rels.ACCOUNT_LIFECYCLE_STAGES,
+			new ParameterizedTypeReference<List<AccountLifecycleStageMetric>>() {
+			},
+			uriVariables);
 	}
 
 	@Override
